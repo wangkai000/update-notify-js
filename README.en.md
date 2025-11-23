@@ -242,6 +242,7 @@ if (process.env.NODE_ENV === 'production') {
 | `scriptRegex` | `RegExp` | `/<script.*src=["'](?<src>[^"']+)/gm` | Script tag regex pattern for custom matching rules |
 | `debug` | `boolean` | `false` | Whether to output logs to console |
 | `promptMessage` | `string` | `'New version detected. Click OK to refresh and update'` | Default confirm prompt message (used for `notifyType='confirm'`) |
+| `cacheControl` | `RequestCache` | `'no-cache'` | Cache control option for fetch request, defaults to 'no-cache' to ensure getting the latest content |
 
 ### VersionUpdateNotifier Instance Methods
 

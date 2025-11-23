@@ -37,6 +37,9 @@ export interface UpdateNotifierOptions {
   /** 默认 confirm 提示文案（用于 notifyType='confirm'） */
   /** Default confirm prompt message (for notifyType='confirm') */
   promptMessage?: string;
+  /** fetch 请求的缓存控制选项，默认 'no-cache' */
+  /** Cache control option for fetch request, default 'no-cache' */
+  cacheControl?: RequestCache;
 }
 
 /**
@@ -78,9 +81,10 @@ class VersionUpdateNotifier {
       pauseOnHidden: options.pauseOnHidden !== false,
       immediate: options.immediate !== false,
       indexPath: options.indexPath || '/',
-      scriptRegex: options.scriptRegex || /\<script.*src=["'](?<src>[^"']+)/gm,
+      scriptRegex: options.scriptRegex || /\<script.*src=["'](?<src>[^"]+)/gm,
       debug: options.debug || false,
-      promptMessage: options.promptMessage || '检测到新版本，点击确定将刷新页面并更新'
+      promptMessage: options.promptMessage || '检测到新版本，点击确定将刷新页面并更新',
+      cacheControl: options.cacheControl || 'no-cache'
     };
 
     this.scriptReg = this.options.scriptRegex;
@@ -137,7 +141,9 @@ class VersionUpdateNotifier {
       const url = `${this.options.indexPath}?timestamp=${Date.now()}`;
       this.log('请求URL:', url);
       
-      const html = await fetch(url).then(res => res.text());
+      const html = await fetch(url, {
+        cache: this.options.cacheControl || 'no-cache'
+      }).then(res => res.text());
       this.scriptReg.lastIndex = 0; // 重置正则下标
       
       const result: string[] = [];
