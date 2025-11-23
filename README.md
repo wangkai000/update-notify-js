@@ -1,7 +1,7 @@
 # version-update-check
 
 [![npm version](https://img.shields.io/npm/v/%40wangkai000%2Fversion-update-check.svg)](https://www.npmjs.com/package/@wangkai000/version-update-check)
-[![license](https://img.shields.io/npm/l/%40wangkai000%2Fversion-update-check.svg)](https://github.com/wangkai000/web-version-checker/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/%40wangkai000%2Fversion-update-check.svg)](https://github.com/wangkai000/version-update-check/blob/main/LICENSE)
 
 一个纯前端实现的版本更新自动检测与提示刷新插件，无需后端配合。
 
@@ -16,10 +16,10 @@
 
 ## 📦 安装
 ```bash
-npm install version-update-check
-yarn add version-update-check
-import { createUpdateNotifier, type UpdateNotifierOptions } from 'version-update-check';
-pnpm add version-update-check
+npm install @wangkai000/version-update-check
+yarn add @wangkai000/version-update-check
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+pnpm add @wangkai000/version-update-check
 ```
 
 ## 🚀 使用示例（三种常见场景）
@@ -33,7 +33,7 @@ pnpm add version-update-check
   <title>版本更新检测示例</title>
 </head>
 <body>
-  <script src="https://unpkg.com/version-update-check/dist/index.umd.js"></script>
+  <script src="https://unpkg.com/@wangkai000/version-update-check/dist/index.umd.js"></script>
   <script>
     // 默认自动轮询：每分钟检测一次，并打印日志与回调
     WebVersionChecker.createUpdateNotifier({
@@ -64,7 +64,7 @@ pnpm add version-update-check
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createUpdateNotifier, type UpdateNotifierOptions } from 'version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
 
 createApp(App).mount('#app');
 
@@ -88,7 +88,7 @@ if (import.meta.env.PROD) {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { createUpdateNotifier, type UpdateNotifierOptions } from 'version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

@@ -1,7 +1,7 @@
 # version-update-check
 
 [![npm version](https://img.shields.io/npm/v/%40wangkai000%2Fversion-update-check.svg)](https://www.npmjs.com/package/@wangkai000/version-update-check)
-[![license](https://img.shields.io/npm/l/%40wangkai000%2Fversion-update-check.svg)](https://github.com/wangkai000/web-version-checker/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/%40wangkai000%2Fversion-update-check.svg)](https://github.com/wangkai000/version-update-check/blob/main/LICENSE)
 
 A pure front-end solution for automatic version update detection and refresh notification.
 
@@ -16,11 +16,11 @@ A pure front-end solution for automatic version update detection and refresh not
 
 ## Install
 ```bash
-npm install version-update-check
+npm install @wangkai000/version-update-check
 # or
-yarn add version-update-check
+yarn add @wangkai000/version-update-check
 # or
-pnpm add version-update-check
+pnpm add @wangkai000/version-update-check
 ```
 
 ## Usage (3 common cases)
@@ -34,7 +34,7 @@ pnpm add version-update-check
   <title>Version Check Demo</title>
 </head>
 <body>
-  <script src="https://unpkg.com/version-update-check/dist/index.umd.js"></script>
+  <script src="https://unpkg.com/@wangkai000/version-update-check/dist/index.umd.js"></script>
   <script>
     // Auto polling: check every minute, with logging and callbacks
     WebVersionChecker.createUpdateNotifier({
@@ -66,7 +66,7 @@ pnpm add version-update-check
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createUpdateNotifier, type UpdateNotifierOptions } from 'version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
 
 createApp(App).mount('#app');
 
@@ -86,7 +86,7 @@ if (import.meta.env.PROD) {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { createUpdateNotifier, type UpdateNotifierOptions } from 'version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

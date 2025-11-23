@@ -24,7 +24,7 @@
     "auto-update",
     "前端更新提示"
   ],
-  "author": "",
+  "author": "wangkai000",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -36,10 +36,10 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/wangkai000/version-update-check.git"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/wangkai000/version-update-check/issues"
   },
-  "homepage": ""
+  "homepage": "https://github.com/wangkai000/version-update-check#readme"
 }
