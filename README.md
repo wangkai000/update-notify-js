@@ -246,7 +246,7 @@ if (process.env.NODE_ENV === 'production') {
 | `onDetected` | `() => void` | `() => {}` | 检测到更新时的回调函数 |
 | `pauseOnHidden` | `boolean` | `true` | 是否在页面隐藏时暂停检测（仅在自动轮询模式下有效） |
 | `immediate` | `boolean` | `true` | 是否立即开始检测（仅在自动轮询模式下有效） |
-| `indexPath` | `string` | `'/'` | 自定义请求路径，默认请求根路径 |
+| `indexPath` | `string \| string[]` | `'/'` | 自定义请求路径，可以是单个路径字符串或路径数组。在微前端场景中，可以配置多个子应用入口路径进行统一检测 |
 | `scriptRegex` | `RegExp` | `/<script.*src=["'](?<src>[^"']+)/gm` | script 标签正则匹配，用于自定义匹配规则 |
 | `debug` | `boolean` | `false` | 是否在控制台输出日志 |
 | `promptMessage` | `string` | `'检测到新版本，点击确定将刷新页面并更新'` | 默认 confirm 提示文案（用于 `notifyType='confirm'`） |
@@ -278,9 +278,62 @@ createUpdateNotifier(options?: UpdateNotifierOptions): VersionUpdateNotifier
 2. **变化检测**：将提取到的资源列表与之前保存的列表进行对比
 3. **更新通知**：当发现资源列表发生变化时，认为有新版本发布，通知用户
 
+### 微前端场景支持
+
+在微前端架构中，可以通过配置`indexPath`数组来同时监控多个子应用的更新情况：
+
+```ts
+// 监控多个子应用
+const options = {
+  pollingInterval: 60000,
+  indexPath: [
+    '/',                // 主应用
+    '/sub-app-1/index.html',  // 子应用1
+    '/sub-app-2/index.html'   // 子应用2
+  ],
+  // 其他配置...
+};
+createUpdateNotifier(options);
+```
+
 > **提示**：对于大多数现代前端应用，构建过程会在文件名中注入哈希值。当代码变更时，生成的文件名也会改变，因此可以通过检测script标签src的变化来判断是否有新版本。
 
 ## 🛠️ 最佳实践
+
+### 微前端架构最佳实践
+
+1. **合理配置路径**：根据子应用的实际部署路径配置`indexPath`数组
+2. **统一管理更新**：在主应用中集中管理所有子应用的更新检测，提供一致的用户体验
+3. **差异化配置**：可以通过多次调用`createUpdateNotifier`为不同子应用创建不同的检测实例，实现差异化的更新策略
+4. **使用手动模式**：对于微前端场景，建议使用手动模式并结合用户操作或应用生命周期事件触发检测
+
+```ts
+// 为不同子应用创建不同的检测实例
+const mainAppNotifier = createUpdateNotifier({
+  indexPath: '/',
+  pollingInterval: null,
+  notifyType: 'custom',
+  onUpdate: () => {
+    // 主应用更新提示，可能需要更谨慎的处理
+    return confirm('主应用有更新，确定要刷新吗？这将影响所有正在使用的子应用');
+  }
+});
+
+const subAppNotifier = createUpdateNotifier({
+  indexPath: ['/sub-app-1', '/sub-app-2'],
+  pollingInterval: null,
+  notifyType: 'custom',
+  onUpdate: () => {
+    // 子应用更新提示
+    return confirm('检测到子应用有更新，确定要刷新页面吗？');
+  }
+});
+
+// 在合适的时机触发检测
+function checkAllUpdates() {
+  mainAppNotifier.checkUpdate();
+  subAppNotifier.checkUpdate();
+}
 
 ### 仅在生产环境启用
 

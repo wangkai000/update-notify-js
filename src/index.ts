@@ -25,9 +25,9 @@ export interface UpdateNotifierOptions {
   /** 是否立即开始检测，默认 true（仅在自动轮询模式下有效） */
   /** Whether to start detection immediately, default true (only effective in auto polling mode) */
   immediate?: boolean;
-  /** 自定义请求路径，默认 '/' */
-  /** Custom request path, default '/' */
-  indexPath?: string;
+  /** 自定义请求路径，支持单路径（字符串）或多路径（字符串数组，用于微前端场景），默认 '/' */
+  /** Custom request path, supports single path (string) or multiple paths (string array, for micro-frontend scenarios), default '/' */
+  indexPath?: string | string[];
   /** script 标签正则匹配，用于自定义匹配规则 */
   /** Regular expression for script tag matching, for custom matching rules */
   scriptRegex?: RegExp;
@@ -134,31 +134,46 @@ class VersionUpdateNotifier {
 
   /**
    * 获取最新页面中的 script 链接
-   * Extract script links from the latest page
+   * Extract script links from the latest page(s)
    */
   private async extractNewScripts(): Promise<string[]> {
     try {
-      const url = `${this.options.indexPath}?timestamp=${Date.now()}`;
-      this.log('请求URL:', url);
+      // 处理单路径或多路径配置
+      const paths = Array.isArray(this.options.indexPath) ? this.options.indexPath : [this.options.indexPath];
       
-      const html = await fetch(url, {
-        cache: this.options.cacheControl || 'no-cache'
-      }).then(res => res.text());
-      this.scriptReg.lastIndex = 0; // 重置正则下标
+      // 存储所有路径提取的脚本
+      const allScripts: string[] = [];
       
-      const result: string[] = [];
-      let match: RegExpExecArray | null;
-      
-      while ((match = this.scriptReg.exec(html))) {
-        if (match.groups?.src) {
-          result.push(match.groups.src);
+      // 遍历所有路径
+      for (const path of paths) {
+        const url = `${path}?timestamp=${Date.now()}`;
+        this.log('请求URL:', url);
+        
+        try {
+          const html = await fetch(url, {
+            cache: this.options.cacheControl || 'no-cache'
+          }).then(res => res.text());
+          
+          this.scriptReg.lastIndex = 0; // 重置正则下标
+          
+          let match: RegExpExecArray | null;
+          while ((match = this.scriptReg.exec(html))) {
+            if (match.groups?.src) {
+              // 添加路径标识，避免不同路径下相同文件名的脚本冲突
+              const scriptId = `${path}::${match.groups.src}`;
+              allScripts.push(scriptId);
+            }
+          }
+        } catch (error) {
+          console.error(`[VersionUpdateNotifier] 获取路径 ${path} 内容失败:`, error);
+          // 继续尝试其他路径，不中断
         }
       }
       
-      this.log('提取到的script列表:', result);
-      return result;
+      this.log('提取到的script列表:', allScripts);
+      return allScripts;
     } catch (error) {
-      console.error('[VersionUpdateNotifier] 获取页面内容失败:', error);
+      console.error('[VersionUpdateNotifier] 脚本提取过程发生错误:', error);
       return [];
     }
   }

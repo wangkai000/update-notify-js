@@ -238,7 +238,7 @@ if (process.env.NODE_ENV === 'production') {
 | `onDetected` | `() => void` | `() => {}` | Callback function when update is detected |
 | `pauseOnHidden` | `boolean` | `true` | Whether to pause detection when page is hidden (only effective in auto-polling mode) |
 | `immediate` | `boolean` | `true` | Whether to start detection immediately (only effective in auto-polling mode) |
-| `indexPath` | `string` | `'/'` | Custom request path, defaults to root path |
+| `indexPath` | `string \| string[]` | `'/'` | Custom request path, can be a single string or an array of paths. In micro-frontend scenarios, you can configure multiple sub-application entry paths for unified detection |
 | `scriptRegex` | `RegExp` | `/<script.*src=["'](?<src>[^"']+)/gm` | Script tag regex pattern for custom matching rules |
 | `debug` | `boolean` | `false` | Whether to output logs to console |
 | `promptMessage` | `string` | `'New version detected. Click OK to refresh and update'` | Default confirm prompt message (used for `notifyType='confirm'`) |
@@ -270,9 +270,62 @@ This plugin detects version updates through the following methods:
 2. **Change Detection**: Compares the extracted resource list with the previously saved list
 3. **Update Notification**: When changes are found in the resource list, it considers a new version to be released and notifies the user
 
+### Micro-Frontend Support
+
+In micro-frontend architecture, you can monitor updates for multiple sub-applications simultaneously by configuring the `indexPath` array:
+
+```ts
+// Monitor multiple sub-applications
+const options = {
+  pollingInterval: 60000,
+  indexPath: [
+    '/',                // Main application
+    '/sub-app-1/index.html',  // Sub-application 1
+    '/sub-app-2/index.html'   // Sub-application 2
+  ],
+  // Other options...
+};
+createUpdateNotifier(options);
+```
+
 > **Tip**: For most modern front-end applications, the build process injects hash values into file names. When code changes, the generated file names also change, so version updates can be determined by detecting changes in script tag src attributes.
 
 ## 🛠️ Best Practices
+
+### Micro-Frontend Architecture Best Practices
+
+1. **Configure Paths Properly**: Configure the `indexPath` array according to the actual deployment paths of your sub-applications
+2. **Unified Update Management**: Centralize update detection for all sub-applications in the main application to provide a consistent user experience
+3. **Differentiated Configuration**: You can create different detection instances for different sub-applications by calling `createUpdateNotifier` multiple times to implement differentiated update strategies
+4. **Use Manual Mode**: For micro-frontend scenarios, it's recommended to use manual mode and trigger detection in combination with user actions or application lifecycle events
+
+```ts
+// Create different detection instances for different sub-applications
+const mainAppNotifier = createUpdateNotifier({
+  indexPath: '/',
+  pollingInterval: null,
+  notifyType: 'custom',
+  onUpdate: () => {
+    // Main application update prompt, which may require more careful handling
+    return confirm('Main application has an update, are you sure you want to refresh? This will affect all active sub-applications');
+  }
+});
+
+const subAppNotifier = createUpdateNotifier({
+  indexPath: ['/sub-app-1', '/sub-app-2'],
+  pollingInterval: null,
+  notifyType: 'custom',
+  onUpdate: () => {
+    // Sub-application update prompt
+    return confirm('Sub-application update detected, are you sure you want to refresh the page?');
+  }
+});
+
+// Trigger detection at appropriate times
+function checkAllUpdates() {
+  mainAppNotifier.checkUpdate();
+  subAppNotifier.checkUpdate();
+}
 
 ### Enable Only in Production Environment
 

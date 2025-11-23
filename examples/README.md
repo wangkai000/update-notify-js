@@ -9,6 +9,7 @@
 - `vanilla/` - 原生 JavaScript 示例
 - `auto-mode.js` - 自动模式示例
 - `manual-mode.js` - 手动模式示例
+- `micro-frontend.js` - 微前端场景示例（支持多路径配置）
 
 ## 安装
 
@@ -94,3 +95,4 @@ if (process.env.NODE_ENV === 'production') {
 3. React 集成：`react/index.jsx`
 4. 自动模式：`auto-mode.js`
 5. 手动模式：`manual-mode.js`
+6. 微前端场景：`micro-frontend.js` - 展示如何监控多个子应用的更新
