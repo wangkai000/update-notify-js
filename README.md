@@ -1,4 +1,4 @@
-# easy-refresh
+# version-update-refresh
 
 [![npm version](https://img.shields.io/npm/v/web-version-checker.svg)](https://www.npmjs.com/package/web-version-checker)
 [![license](https://img.shields.io/npm/l/web-version-checker.svg)](https://github.com/yourusername/web-version-checker/blob/main/LICENSE)
@@ -16,11 +16,11 @@
 
 ## 📦 安装
 ```bash
-npm install easy-refresh
+npm install version-update-refresh
 # 或
-yarn add easy-refresh
+yarn add version-update-refresh
 # 或
-pnpm add easy-refresh
+pnpm add version-update-refresh
 ```
 
 ## 🚀 使用示例（三种常见场景）

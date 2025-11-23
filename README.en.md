@@ -1,4 +1,4 @@
-# easy-refresh
+# version-update-refresh
 
 [![npm version](https://img.shields.io/npm/v/web-version-checker.svg)](https://www.npmjs.com/package/web-version-checker)
 [![license](https://img.shields.io/npm/l/web-version-checker.svg)](https://github.com/yourusername/web-version-checker/blob/main/LICENSE)
@@ -16,11 +16,11 @@ A pure front-end solution for automatic version update detection and refresh not
 
 ## Install
 ```bash
-npm install easy-refresh
+npm install version-update-refresh
 # or
-yarn add easy-refresh
+yarn add version-update-refresh
 # or
-pnpm add easy-refresh
+pnpm add version-update-refresh
 ```
 
 ## Usage (3 common cases)
