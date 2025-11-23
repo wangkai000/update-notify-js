@@ -1,4 +1,4 @@
-# @wangkai000/version-update-check
+# update-notify-js
 
 <div align="center">
   <a href="./README.md" style="margin-right: 15px;">简体中文</a> | 
@@ -23,13 +23,13 @@ A lightweight front-end version update detection and notification plugin. It can
 
 ```bash
 # Using npm
-npm install @wangkai000/version-update-check
+npm install update-notify-js
 
 # Using yarn
-yarn add @wangkai000/version-update-check
+yarn add update-notify-js
 
 # Using pnpm
-pnpm add @wangkai000/version-update-check
+pnpm add update-notify-js
 ```
 
 ## 🚀 Quick Start
@@ -45,19 +45,19 @@ pnpm add @wangkai000/version-update-check
   <title>Version Check Demo</title>
 </head>
 <body>
-  <script src="https://unpkg.com/@wangkai000/version-update-check/dist/index.umd.js"></script>
+  <script src="https://unpkg.com/update-notify-js/dist/index.umd.js"></script>
   <script>
     // Auto polling: check every minute, with logging and callbacks
     WebVersionChecker.createUpdateNotifier({
       pollingInterval: 60000,
       debug: true,
       onDetected: () => {
-        console.log('[version-update-check] New version detected');
+        console.log('[update-notify-js] New version detected');
       },
       // Custom prompt: confirm then manually refresh (demo of location.reload)
       notifyType: 'custom',
       onUpdate: () => {
-        console.log('[version-update-check] Ready to refresh page for update');
+        console.log('[update-notify-js] Ready to refresh page for update');
         const ok = confirm('New version detected. Refresh page now to update?');
         if (ok) {
           // Manually refresh the page
@@ -82,14 +82,14 @@ pnpm add @wangkai000/version-update-check
   <title>Version Check Demo</title>
 </head>
 <body>
-  <script src="https://unpkg.com/@wangkai000/version-update-check/dist/index.umd.js"></script>
+  <script src="https://unpkg.com/update-notify-js/dist/index.umd.js"></script>
   <script>
     // Manual mode: disable auto polling, control detection timing yourself
     const notifier = WebVersionChecker.createUpdateNotifier({
       pollingInterval: null, // Disable auto polling
       debug: true,
       onDetected: () => {
-        console.log('[version-update-check] New version detected');
+        console.log('[update-notify-js] New version detected');
       }
     });
     
@@ -124,7 +124,7 @@ pnpm add @wangkai000/version-update-check
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from 'update-notify-js';
 
 createApp(App).mount('#app');
 
@@ -143,7 +143,7 @@ if (import.meta.env.PROD) {
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from 'update-notify-js';
 
 const app = createApp(App);
 app.mount('#app');
@@ -180,7 +180,7 @@ if (import.meta.env.PROD) {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from 'update-notify-js';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -203,7 +203,7 @@ if (process.env.NODE_ENV === 'production') {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from 'update-notify-js';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -325,13 +325,13 @@ Contributions are welcome through the following ways:
 
 ## 📄 License
 
-[MIT](https://github.com/wangkai000/version-update-check/blob/main/LICENSE)
+[MIT](https://github.com/wangkai000/update-notify-js/blob/main/LICENSE)
 
 ## 🌐 Related Links
 
-- [GitHub Repository](https://github.com/wangkai000/version-update-check)
-- [NPM Package](https://www.npmjs.com/package/@wangkai000/version-update-check)
+- [GitHub Repository](https://github.com/wangkai000/update-notify-js)
+- [NPM Package](https://www.npmjs.com/package/update-notify-js)
 
 ---
 
-**Thank you for using @wangkai000/version-update-check! If you have any questions, please submit an Issue on GitHub.**
+**Thank you for using update-notify-js! If you have any questions, please submit an Issue on GitHub.**

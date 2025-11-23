@@ -1,5 +1,5 @@
 // 完全手动模式示例
-import { createUpdateNotifier } from 'version-update-notifier';
+import { createUpdateNotifier } from 'update-notify-js';
 
 // ==================== 方式 1: 禁用自动轮询，完全手动控制 ====================
 // 设置 pollingInterval 为 null 或 0

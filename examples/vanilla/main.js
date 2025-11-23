@@ -1,5 +1,5 @@
 // 使用 ES Module 的原生 JS 示例
-import { createUpdateNotifier } from '@wangkai000/version-update-check';
+import { createUpdateNotifier } from 'update-notify-js';
 
 /**
  * 示例 1: 基础使用

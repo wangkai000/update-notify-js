@@ -1,7 +1,7 @@
 // 自动模式使用示例 - VersionUpdateCheck
 // 自动模式：组件自动进行轮询检测和通知，无需手动干预
 
-import { createUpdateNotifier } from '@wangkai000/version-update-check';
+import { createUpdateNotifier } from 'update-notify-js';
 
 /**
  * 自动模式示例

@@ -1,4 +1,4 @@
-# @wangkai000/version-update-check
+# update-notify-js
 
 <div align="center">
   <a href="./README.md" style="font-weight: bold; margin-right: 15px;">简体中文</a> | 
@@ -23,13 +23,13 @@
 
 ```bash
 # 使用 npm
-npm install @wangkai000/version-update-check
+npm install update-notify-js
 
 # 使用 yarn
-yarn add @wangkai000/version-update-check
+yarn add update-notify-js
 
 # 使用 pnpm
-pnpm add @wangkai000/version-update-check
+pnpm add update-notify-js
 ```
 
 ## 🚀 快速开始
@@ -45,19 +45,19 @@ pnpm add @wangkai000/version-update-check
   <title>版本更新检测示例</title>
 </head>
 <body>
-  <script src="https://unpkg.com/@wangkai000/version-update-check/dist/index.umd.js"></script>
+  <script src="https://unpkg.com/update-notify-js/dist/index.umd.js"></script>
   <script>
     // 默认自动轮询：每分钟检测一次，并打印日志与回调
     WebVersionChecker.createUpdateNotifier({
       pollingInterval: 60000,
       debug: true,
       onDetected: () => {
-        console.log('[version-update-check] 检测到新版本');
+        console.log('[update-notify-js] 检测到新版本');
       },
       // 使用自定义提示：确认后手动刷新（演示 location.reload）
       notifyType: 'custom',
       onUpdate: () => {
-        console.log('[version-update-check] 准备刷新页面以更新版本');
+        console.log('[update-notify-js] 准备刷新页面以更新版本');
         const ok = confirm('检测到新版本，是否立即刷新页面以更新？');
         if (ok) {
           // 手动刷新页面
@@ -82,14 +82,14 @@ pnpm add @wangkai000/version-update-check
   <title>版本更新检测示例</title>
 </head>
 <body>
-  <script src="https://unpkg.com/@wangkai000/version-update-check/dist/index.umd.js"></script>
+  <script src="https://unpkg.com/update-notify-js/dist/index.umd.js"></script>
   <script>
     // 手动模式：禁用自动轮询，自己控制检测时机
     const notifier = WebVersionChecker.createUpdateNotifier({
       pollingInterval: null, // 禁用自动轮询
       debug: true,
       onDetected: () => {
-        console.log('[version-update-check] 检测到新版本');
+        console.log('[update-notify-js] 检测到新版本');
       }
     });
     
@@ -124,7 +124,7 @@ pnpm add @wangkai000/version-update-check
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from 'update-notify-js';
 
 createApp(App).mount('#app');
 
@@ -146,7 +146,7 @@ if (import.meta.env.PROD) {
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from 'update-notify-js';
 
 const app = createApp(App);
 app.mount('#app');
@@ -186,7 +186,7 @@ if (import.meta.env.PROD) {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from 'update-notify-js';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -210,7 +210,7 @@ if (process.env.NODE_ENV === 'production') {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+import { createUpdateNotifier, type UpdateNotifierOptions } from 'update-notify-js';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -333,13 +333,13 @@ const options = {
 
 ## 📄 许可证
 
-[MIT](https://github.com/wangkai000/version-update-check/blob/main/LICENSE)
+[MIT](https://github.com/wangkai000/update-notify-js/blob/main/LICENSE)
 
 ## 🌐 相关链接
 
-- [GitHub 仓库](https://github.com/wangkai000/version-update-check)
-- [NPM 包](https://www.npmjs.com/package/@wangkai000/version-update-check)
+- [GitHub 仓库](https://github.com/wangkai000/update-notify-js)
+- [NPM 包](https://www.npmjs.com/package/update-notify-js)
 
 ---
 
-**感谢使用 @wangkai000/version-update-check！如有任何问题，欢迎在GitHub上提交Issue。**
+**感谢使用 update-notify-js！如有任何问题，欢迎在GitHub上提交Issue。**

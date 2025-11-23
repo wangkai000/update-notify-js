@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { createUpdateNotifier } from '@wangkai000/version-update-check';
+import { createUpdateNotifier } from 'update-notify-js';
 
 /**
  * React 应用初始化

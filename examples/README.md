@@ -1,6 +1,6 @@
 # Examples
 
-这个目录包含了 `@wangkai000/version-update-check` 在不同框架中的使用示例。
+这个目录包含了 `update-notify-js` 在不同框架中的使用示例。
 
 ## 目录结构
 
@@ -13,11 +13,11 @@
 ## 安装
 
 ```bash
-npm install @wangkai000/version-update-check
+npm install update-notify-js
 # 或
-yarn add @wangkai000/version-update-check
+yarn add update-notify-js
 # 或
-pnpm add @wangkai000/version-update-check
+pnpm add update-notify-js
 ```
 
 ## 快速开始
@@ -25,7 +25,7 @@ pnpm add @wangkai000/version-update-check
 ### Vue 3 项目
 
 ```javascript
-import { createUpdateNotifier } from '@wangkai000/version-update-check';
+import { createUpdateNotifier } from 'update-notify-js';
 
 if (import.meta.env.PROD) {
   createUpdateNotifier({
@@ -41,7 +41,7 @@ if (import.meta.env.PROD) {
 ### React 项目
 
 ```javascript
-import { createUpdateNotifier } from '@wangkai000/version-update-check';
+import { createUpdateNotifier } from 'update-notify-js';
 
 if (process.env.NODE_ENV === 'production') {
   createUpdateNotifier({
@@ -58,7 +58,7 @@ if (process.env.NODE_ENV === 'production') {
 
 - 使用 ES Module
   ```javascript
-  import { createUpdateNotifier } from '@wangkai000/version-update-check';
+  import { createUpdateNotifier } from 'update-notify-js';
   
   const notifier = createUpdateNotifier({
     pollingInterval: 60000,

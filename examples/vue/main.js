@@ -1,7 +1,7 @@
 // Vue 3 项目使用示例
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createUpdateNotifier } from '@wangkai000/version-update-check';
+import { createUpdateNotifier } from 'update-notify-js';
 
 /**
  * Vue 应用初始化

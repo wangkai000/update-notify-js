@@ -2,7 +2,7 @@
  * Jest 配置文件
  */
 
-export default {
+module.exports = {
   // 设置测试环境为 JSDOM，模拟浏览器环境
   testEnvironment: 'jsdom',
   

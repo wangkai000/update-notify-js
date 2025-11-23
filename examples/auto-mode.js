@@ -1,5 +1,5 @@
 // 自动轮询模式示例
-import { createUpdateNotifier } from 'version-update-notifier';
+import { createUpdateNotifier } from 'update-notify-js';
 
 // ==================== 方式 1: 每分钟自动检测（最简单） ====================
 const notifier1 = createUpdateNotifier({
@@ -94,7 +94,7 @@ if (import.meta.env.PROD) {
 // main.js
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createUpdateNotifier } from 'version-update-notifier';
+import { createUpdateNotifier } from 'update-notify-js';
 
 createApp(App).mount('#app');
 
@@ -128,7 +128,7 @@ if (import.meta.env.PROD) {
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { createUpdateNotifier } from 'version-update-notifier';
+import { createUpdateNotifier } from 'update-notify-js';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -1,16 +1,11 @@
 {
-  "name": "@wangkai000/version-update-check",
+  "name": "update-notify-js",
   "version": "1.0.5",
-  "description": "一个纯前端实现的版本更新自动提示刷新插件。plugin that automatically notifies and refreshes for version updates.",
-  "type": "module",
+  "description": "A lightweight library for detecting version updates in web applications",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "unpkg": "dist/index.umd.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "README.md"
-  ],
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -44,10 +39,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wangkai000/version-update-check.git"
+    "url": "git+https://github.com/wangkai000/update-notify-js.git"
   },
   "bugs": {
-    "url": "https://github.com/wangkai000/version-update-check/issues"
+    "url": "https://github.com/wangkai000/update-notify-js/issues"
   },
-  "homepage": "https://github.com/wangkai000/version-update-check#readme"
+  "homepage": "https://github.com/wangkai000/update-notify-js#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
 }

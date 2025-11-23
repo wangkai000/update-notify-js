@@ -1,7 +1,7 @@
 // 手动模式使用示例 - VersionUpdateCheck
 // 手动模式：完全由开发者控制版本检测的时机和通知的显示方式
 
-import { createUpdateNotifier } from '@wangkai000/version-update-check';
+import { createUpdateNotifier } from 'update-notify-js';
 
 /**
  * 手动模式示例
