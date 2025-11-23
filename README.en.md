@@ -1,31 +1,8 @@
-# version-update-check
-
-[![npm version](https://img.shields.io/npm/v/%40wangkai000%2Fversion-update-check.svg)](https://www.npmjs.com/package/@wangkai000/version-update-check)
-[![license](https://img.shields.io/npm/l/%40wangkai000%2Fversion-update-check.svg)](https://github.com/wangkai000/version-update-check/blob/main/LICENSE)
-
-A pure front-end solution for automatic version update detection and refresh notification.
-
-[简体中文](./README.md) | English
-
-## Features
-- Front-end only, no backend needed
-- Auto or manual detection modes
-- Customizable UI (confirm or custom dialog)
-- Smart pause when page hidden
-- Supports ESM / CJS / UMD
-
-## Install
-```bash
-npm install @wangkai000/version-update-check
-# or
-yarn add @wangkai000/version-update-check
-# or
-pnpm add @wangkai000/version-update-check
-```
-
 ## Usage (3 common cases)
 
 ### 1) Native HTML + JS (UMD)
+
+#### Auto Polling Mode
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +39,54 @@ pnpm add @wangkai000/version-update-check
 </html>
 ```
 
+#### Manual Start/Stop Mode
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Version Check Demo</title>
+</head>
+<body>
+  <script src="https://unpkg.com/@wangkai000/version-update-check/dist/index.umd.js"></script>
+  <script>
+    // Manual mode: disable auto polling, control detection timing yourself
+    const notifier = WebVersionChecker.createUpdateNotifier({
+      pollingInterval: null, // Disable auto polling
+      debug: true,
+      onDetected: () => {
+        console.log('[version-update-check] New version detected');
+      }
+    });
+    
+    // Manual detection (e.g., on button click)
+    document.getElementById('checkUpdateBtn').addEventListener('click', async () => {
+      const hasUpdate = await notifier.checkUpdate();
+      console.log('Detection complete, has update:', hasUpdate);
+    });
+    
+    // Silent detection
+    document.getElementById('checkSilentBtn').addEventListener('click', async () => {
+      const hasUpdate = await notifier.checkNow();
+      console.log('Silent detection complete, has update:', hasUpdate);
+      if (hasUpdate) {
+        // Custom prompt logic
+        if (confirm('New version found, refresh page?')) {
+          location.reload();
+        }
+      }
+    });
+  </script>
+  
+  <button id="checkUpdateBtn">Check Update and Prompt</button>
+  <button id="checkSilentBtn">Silent Check Update</button>
+</body>
+</html>
+```
+
 ### 2) Vue + TypeScript (main.ts)
+
+#### Auto Polling Mode
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
@@ -81,7 +105,43 @@ if (import.meta.env.PROD) {
 }
 ```
 
+#### Manual Start/Stop Mode
+```ts
+import { createApp } from 'vue';
+import App from './App.vue';
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+
+const app = createApp(App);
+app.mount('#app');
+
+if (import.meta.env.PROD) {
+  // Manual mode: disable auto polling
+  const options: UpdateNotifierOptions = {
+    pollingInterval: null, // Disable auto polling
+    notifyType: 'confirm',
+    promptMessage: 'New version found, refresh now?',
+    onDetected: () => console.log('New version detected')
+  };
+  
+  const notifier = createUpdateNotifier(options);
+  
+  // Manual detection when needed
+  window.checkForUpdate = async () => {
+    const hasUpdate = await notifier.checkUpdate();
+    console.log('Detection complete, has update:', hasUpdate);
+  };
+  
+  // Silent detection
+  window.checkSilently = async () => {
+    const hasUpdate = await notifier.checkNow();
+    console.log('Silent detection complete, has update:', hasUpdate);
+  };
+}
+```
+
 ### 3) React + TypeScript (index.tsx)
+
+#### Auto Polling Mode
 ```tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -104,35 +164,53 @@ if (process.env.NODE_ENV === 'production') {
 }
 ```
 
-## Options (UpdateNotifierOptions)
+#### Manual Start/Stop Mode
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| pollingInterval | number \| null | 10000 | Polling interval in ms. Set null or 0 to disable auto polling and use manual `checkUpdate`. |
-| notifyType | 'confirm' \| 'custom' | 'confirm' | Notification type. 'confirm' uses browser confirm; 'custom' requires `onUpdate`. |
-| onUpdate | () => boolean \| Promise<boolean> | - | Custom prompt function; return true to refresh, false to cancel. Used with `notifyType='custom'`. |
-| onDetected | () => void | - | Callback when an update is detected (does not affect refresh flow). |
-| pauseOnHidden | boolean | true | Pause detection when page is hidden (auto mode only). |
-| immediate | boolean | true | Start detection immediately (auto mode only). |
-| indexPath | string | '/' | Path to fetch page HTML. |
-| scriptRegex | RegExp | /\<script.*src=["'](?<src>[^"']+)/gm | Regex to extract script src list. |
-| debug | boolean | false | Print debug logs. |
-| promptMessage | string | '检测到新版本，点击确定将刷新页面并更新' | Prompt message for confirm mode. |
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
+if (process.env.NODE_ENV === 'production') {
+  // Manual mode: disable auto polling
+  const options: UpdateNotifierOptions = {
+    pollingInterval: null, // Disable auto polling
+    notifyType: 'confirm',
+    promptMessage: 'New version found, refresh now?'
+  };
+  
+  const notifier = createUpdateNotifier(options);
+  
+  // Expose to global for component usage
+  window.versionNotifier = notifier;
+}
 
-## API
-
-| Name | Signature | Description | Notes |
-| --- | --- | --- | --- |
-| createUpdateNotifier | (options?: UpdateNotifierOptions) => WebVersionChecker | Create and return a detector instance | - |
-| start | () => void | Start detection | Auto mode only |
-| stop | () => void | Stop detection | Auto mode only |
-| checkNow | () => Promise<boolean> | Silent detection, returns whether update exists | - |
-| checkUpdate | () => Promise<boolean> | Manual detection and prompt, reload on confirm | Use in manual mode |
-| reset | () => void | Reset and stop detection | - |
-
-
-## How it works
-1) Build changes script filenames in index.html (with hash)
-2) Fetch latest index.html and extract script list
-3) Compare lists; if changed, prompt to refresh
+// Usage example in component
+const UpdateChecker: React.FC = () => {
+  const handleCheckUpdate = async () => {
+    if (window.versionNotifier) {
+      const hasUpdate = await window.versionNotifier.checkUpdate();
+      console.log('Detection complete, has update:', hasUpdate);
+    }
+  };
+  
+  const handleCheckSilent = async () => {
+    if (window.versionNotifier) {
+      const hasUpdate = await window.versionNotifier.checkNow();
+      console.log('Silent detection complete, has update:', hasUpdate);
+    }
+  };
+  
+  return (
+    <div>
+      <button onClick={handleCheckUpdate}>Check Update and Prompt</button>
+      <button onClick={handleCheckSilent}>Silent Check Update</button>
+    </div>
+  );
+};

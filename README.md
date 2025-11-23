@@ -1,31 +1,8 @@
-# version-update-check
-
-[![npm version](https://img.shields.io/npm/v/%40wangkai000%2Fversion-update-check.svg)](https://www.npmjs.com/package/@wangkai000/version-update-check)
-[![license](https://img.shields.io/npm/l/%40wangkai000%2Fversion-update-check.svg)](https://github.com/wangkai000/version-update-check/blob/main/LICENSE)
-
-一个纯前端实现的版本更新自动检测与提示刷新插件，无需后端配合。
-
-简体中文 | [English](./README.en.md)
-
-## ✨ 特性
-- 纯前端实现，无需后端
-- 自动或手动检测两种模式
-- 可自定义提示UI（confirm或自定义弹窗）
-- 页面隐藏时智能暂停（可配置）
-- 支持 ESM / CJS / UMD，多框架适配
-
-## 📦 安装
-```bash
-npm install @wangkai000/version-update-check
-# 或
-yarn add @wangkai000/version-update-check
-# 或
-pnpm add @wangkai000/version-update-check
-```
-
 ## 🚀 使用示例（三种常见场景）
 
 ### 1) 原生 HTML + JS（UMD）
+
+#### 自动轮询模式
 ```html
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -62,7 +39,54 @@ pnpm add @wangkai000/version-update-check
 </html>
 ```
 
+#### 手动启动暂停模式
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>版本更新检测示例</title>
+</head>
+<body>
+  <script src="https://unpkg.com/@wangkai000/version-update-check/dist/index.umd.js"></script>
+  <script>
+    // 手动模式：禁用自动轮询，自己控制检测时机
+    const notifier = WebVersionChecker.createUpdateNotifier({
+      pollingInterval: null, // 禁用自动轮询
+      debug: true,
+      onDetected: () => {
+        console.log('[version-update-check] 检测到新版本');
+      }
+    });
+    
+    // 手动启动检测（例如点击按钮时）
+    document.getElementById('checkUpdateBtn').addEventListener('click', async () => {
+      const hasUpdate = await notifier.checkUpdate();
+      console.log('检测完成，是否有更新:', hasUpdate);
+    });
+    
+    // 也可以使用 checkNow 静默检测
+    document.getElementById('checkSilentBtn').addEventListener('click', async () => {
+      const hasUpdate = await notifier.checkNow();
+      console.log('静默检测完成，是否有更新:', hasUpdate);
+      if (hasUpdate) {
+        // 自定义提示逻辑
+        if (confirm('发现新版本，是否刷新页面？')) {
+          location.reload();
+        }
+      }
+    });
+  </script>
+  
+  <button id="checkUpdateBtn">检查更新并提示</button>
+  <button id="checkSilentBtn">静默检查更新</button>
+</body>
+</html>
+```
+
 ### 2) Vue + TypeScript（main.ts）
+
+#### 自动轮询模式
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
@@ -84,7 +108,46 @@ if (import.meta.env.PROD) {
 }
 ```
 
+#### 手动启动暂停模式
+```ts
+import { createApp } from 'vue';
+import App from './App.vue';
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+
+const app = createApp(App);
+app.mount('#app');
+
+// 仅生产环境启用
+if (import.meta.env.PROD) {
+  // 手动模式：禁用自动轮询
+  const options: UpdateNotifierOptions = {
+    pollingInterval: null, // 禁用自动轮询
+    notifyType: 'confirm',
+    promptMessage: '发现新版本，是否立即刷新？',
+    onDetected: () => {
+      console.log('检测到新版本');
+    }
+  };
+  
+  const notifier = createUpdateNotifier(options);
+  
+  // 在需要时手动检测更新
+  window.checkForUpdate = async () => {
+    const hasUpdate = await notifier.checkUpdate();
+    console.log('检测完成，是否有更新:', hasUpdate);
+  };
+  
+  // 静默检测
+  window.checkSilently = async () => {
+    const hasUpdate = await notifier.checkNow();
+    console.log('静默检测完成，是否有更新:', hasUpdate);
+  };
+}
+```
+
 ### 3) React + TypeScript（index.tsx）
+
+#### 自动轮询模式
 ```tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -95,6 +158,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
+);
 
 if (process.env.NODE_ENV === 'production') {
   const options: UpdateNotifierOptions = {
@@ -107,35 +171,54 @@ if (process.env.NODE_ENV === 'production') {
 }
 ```
 
-## ⚙️ 参数说明（UpdateNotifierOptions）
+#### 手动启动暂停模式
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
 
-| 参数 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| pollingInterval | number \| null | 10000 | 轮询间隔（毫秒）。设为 null 或 0 禁用自动轮询，需手动调用 `checkUpdate`。 |
-| notifyType | 'confirm' \| 'custom' | 'confirm' | 提示方式。'confirm' 使用浏览器确认框；'custom' 需提供 `onUpdate`。 |
-| onUpdate | () => boolean \| Promise<boolean> | - | 自定义提示函数；返回 true 表示确认刷新，false 表示取消。与 `notifyType='custom'` 配合使用。 |
-| onDetected | () => void | - | 检测到更新时触发的回调（不影响刷新流程）。 |
-| pauseOnHidden | boolean | true | 页面隐藏时是否暂停检测（仅自动轮询模式有效）。 |
-| immediate | boolean | true | 是否立即开始检测（仅自动轮询模式有效）。 |
-| indexPath | string | '/' | 拉取页面内容的路径。 |
-| scriptRegex | RegExp | /\<script.*src=["'](?<src>[^"']+)/gm | 提取 script 的正则。 |
-| debug | boolean | false | 是否打印调试日志。 |
-| promptMessage | string | '检测到新版本，点击确定将刷新页面并更新' | confirm 模式的提示文案。 |
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
+if (process.env.NODE_ENV === 'production') {
+  // 手动模式：禁用自动轮询
+  const options: UpdateNotifierOptions = {
+    pollingInterval: null, // 禁用自动轮询
+    notifyType: 'confirm',
+    promptMessage: '发现新版本，是否立即刷新？',
+    debug: false
+  };
+  
+  const notifier = createUpdateNotifier(options);
+  
+  // 暴露到全局供组件调用
+  window.versionNotifier = notifier;
+}
 
-## 🧩 API
-
-| 名称 | 签名 | 说明 | 备注 |
-| --- | --- | --- | --- |
-| createUpdateNotifier | (options?: UpdateNotifierOptions) => WebVersionChecker | 创建并返回检测器实例 | - |
-| start | () => void | 开始检测 | 仅自动轮询模式有效 |
-| stop | () => void | 停止检测 | 仅自动轮询模式有效 |
-| checkNow | () => Promise<boolean> | 静默检测，仅返回是否有更新，不弹窗 | - |
-| checkUpdate | () => Promise<boolean> | 手动检测并弹窗提示用户，用户确认后刷新 | 适用于手动模式 |
-| reset | () => void | 重置状态并停止检测 | - |
-
-
-## 🔍 工作原理（简述）
-1) 每次构建后，index.html 中的 script 文件名会变化（通常带 hash）。
-2) 插件定期拉取最新的 index.html，提取其中的 script 列表。
-3) 与上一次记录对比，若不同则判定为版本更新，并提示刷新。
+// 在组件中使用示例
+const UpdateChecker: React.FC = () => {
+  const handleCheckUpdate = async () => {
+    if (window.versionNotifier) {
+      const hasUpdate = await window.versionNotifier.checkUpdate();
+      console.log('检测完成，是否有更新:', hasUpdate);
+    }
+  };
+  
+  const handleCheckSilent = async () => {
+    if (window.versionNotifier) {
+      const hasUpdate = await window.versionNotifier.checkNow();
+      console.log('静默检测完成，是否有更新:', hasUpdate);
+    }
+  };
+  
+  return (
+    <div>
+      <button onClick={handleCheckUpdate}>检查更新并提示</button>
+      <button onClick={handleCheckSilent}>静默检查更新</button>
+    </div>
+  );
+};
