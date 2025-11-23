@@ -115,6 +115,7 @@ if (process.env.NODE_ENV === 'production') {
 | debug | boolean | false | Print debug logs. |
 | promptMessage | string | '检测到新版本，点击确定将刷新页面并更新' | Prompt message for confirm mode. |
 
+
 ## API
 
 | Name | Signature | Description | Notes |
@@ -125,6 +126,7 @@ if (process.env.NODE_ENV === 'production') {
 | checkNow | () => Promise<boolean> | Silent detection, returns whether update exists | - |
 | checkUpdate | () => Promise<boolean> | Manual detection and prompt, reload on confirm | Use in manual mode |
 | reset | () => void | Reset and stop detection | - |
+
 
 ## How it works
 1) Build changes script filenames in index.html (with hash)

@@ -117,6 +117,7 @@ if (process.env.NODE_ENV === 'production') {
 | debug | boolean | false | 是否打印调试日志。 |
 | promptMessage | string | '检测到新版本，点击确定将刷新页面并更新' | confirm 模式的提示文案。 |
 
+
 ## 🧩 API
 
 | 名称 | 签名 | 说明 | 备注 |
@@ -127,6 +128,7 @@ if (process.env.NODE_ENV === 'production') {
 | checkNow | () => Promise<boolean> | 静默检测，仅返回是否有更新，不弹窗 | - |
 | checkUpdate | () => Promise<boolean> | 手动检测并弹窗提示用户，用户确认后刷新 | 适用于手动模式 |
 | reset | () => void | 重置状态并停止检测 | - |
+
 
 ## 🔍 工作原理（简述）
 1) 每次构建后，index.html 中的 script 文件名会变化（通常带 hash）。
