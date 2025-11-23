@@ -1,6 +1,6 @@
 {
   "name": "@wangkai000/version-update-check",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "一个纯前端实现的版本更新自动提示刷新插件。plugin that automatically notifies and refreshes for version updates.",
   "type": "module",
   "main": "dist/index.cjs.js",
