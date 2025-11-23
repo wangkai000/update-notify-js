@@ -1,34 +1,47 @@
 /**
  * 版本更新检测配置选项
+ * Version update detection configuration options
  */
 export interface UpdateNotifierOptions {
   /** 
    * 轮询间隔时间，单位毫秒，默认 10000ms (10秒)
    * 设置为 null 或 0 则禁用自动轮询（需手动调用 checkUpdate）
+   * Polling interval in milliseconds, default 10000ms (10 seconds)
+   * Set to null or 0 to disable automatic polling (manual checkUpdate required)
    */
   pollingInterval?: number | null;
   /** 提示用户更新的方式，默认 'confirm' */
+  /** Method to prompt user for update, default 'confirm' */
   notifyType?: 'confirm' | 'custom';
   /** 自定义提示函数，返回 true 表示确认刷新 */
+  /** Custom prompt function, returns true to confirm refresh */
   onUpdate?: () => boolean | Promise<boolean>;
   /** 检测到更新时的回调 */
+  /** Callback when update is detected */
   onDetected?: () => void;
   /** 是否在页面隐藏时暂停检测，默认 true（仅在自动轮询模式下有效） */
+  /** Whether to pause detection when page is hidden, default true (only effective in auto polling mode) */
   pauseOnHidden?: boolean;
   /** 是否立即开始检测，默认 true（仅在自动轮询模式下有效） */
+  /** Whether to start detection immediately, default true (only effective in auto polling mode) */
   immediate?: boolean;
   /** 自定义请求路径，默认 '/' */
+  /** Custom request path, default '/' */
   indexPath?: string;
   /** script 标签正则匹配，用于自定义匹配规则 */
+  /** Regular expression for script tag matching, for custom matching rules */
   scriptRegex?: RegExp;
   /** 是否在控制台输出日志，默认 false */
+  /** Whether to output logs to console, default false */
   debug?: boolean;
   /** 默认 confirm 提示文案（用于 notifyType='confirm'） */
+  /** Default confirm prompt message (for notifyType='confirm') */
   promptMessage?: string;
 }
 
 /**
  * 版本更新检测配置选项（内部使用）
+ * Version update detection configuration options (internal use)
  */
 interface InternalOptions extends Omit<UpdateNotifierOptions, 'pollingInterval'> {
   pollingInterval: number;
@@ -36,6 +49,7 @@ interface InternalOptions extends Omit<UpdateNotifierOptions, 'pollingInterval'>
 
 /**
  * 版本更新通知器类
+ * Version update notifier class
  */
 class VersionUpdateNotifier {
   private lastSrcs: string[] | null = null;
@@ -48,11 +62,13 @@ class VersionUpdateNotifier {
 
   constructor(options: UpdateNotifierOptions = {}) {
     // 处理 pollingInterval 为 null 或 0 的情况
+    // Handle cases where pollingInterval is null or 0
     const pollingInterval = options.pollingInterval === null || options.pollingInterval === 0 
       ? null 
       : (options.pollingInterval || 10000);
 
     this.isManualMode = pollingInterval === null;
+    // Flag for manual mode vs auto polling mode
 
     this.options = {
       pollingInterval: pollingInterval || 10000,
@@ -70,11 +86,13 @@ class VersionUpdateNotifier {
     this.scriptReg = this.options.scriptRegex;
 
     // 仅在自动轮询模式下设置页面可见性监听
+    // Set up page visibility listener only in auto polling mode
     if (!this.isManualMode && this.options.pauseOnHidden) {
       this.setupVisibilityListener();
     }
 
     // 仅在自动轮询模式下且 immediate 为 true 时自动开始
+    // Automatically start only in auto polling mode and when immediate is true
     if (!this.isManualMode && this.options.immediate) {
       this.start();
     }
@@ -84,6 +102,7 @@ class VersionUpdateNotifier {
 
   /**
    * 日志输出
+   * Log output
    */
   private log(...args: any[]) {
     if (this.options.debug) {
@@ -93,6 +112,7 @@ class VersionUpdateNotifier {
 
   /**
    * 设置页面可见性监听
+   * Set up page visibility listener
    */
   private setupVisibilityListener() {
     if (typeof document !== 'undefined') {
@@ -110,6 +130,7 @@ class VersionUpdateNotifier {
 
   /**
    * 获取最新页面中的 script 链接
+   * Extract script links from the latest page
    */
   private async extractNewScripts(): Promise<string[]> {
     try {
@@ -138,6 +159,7 @@ class VersionUpdateNotifier {
 
   /**
    * 对比是否有更新
+   * Compare to check for updates
    */
   private async needUpdate(): Promise<boolean> {
     const newScripts = await this.extractNewScripts();
@@ -151,11 +173,13 @@ class VersionUpdateNotifier {
     let result = false;
 
     // 数量不同，说明有更新
+     // Different count means there are updates
     if (this.lastSrcs.length !== newScripts.length) {
       this.log('script数量变化:', this.lastSrcs.length, '->', newScripts.length);
       result = true;
     } else {
       // 逐个对比
+    // Compare one by one
       for (let i = 0; i < newScripts.length; i++) {
         if (this.lastSrcs[i] !== newScripts[i]) {
           this.log('script变化:', this.lastSrcs[i], '->', newScripts[i]);
@@ -171,9 +195,11 @@ class VersionUpdateNotifier {
 
   /**
    * 自动刷新检测
+   * Auto refresh detection
    */
   private async autoRefresh() {
     // 如果页面不可见且配置了暂停检测，则不执行
+    // If page is not visible and pause on hidden is configured, do not execute
     if (this.options.pauseOnHidden && !this.isPageVisible) {
       this.log('页面不可见，暂停检测');
       this.timerId = null;
@@ -187,6 +213,7 @@ class VersionUpdateNotifier {
         this.log('检测到版本更新');
         
         // 触发检测到更新的回调
+        // Trigger update detected callback
         if (this.options.onDetected) {
           this.options.onDetected();
         }
@@ -194,10 +221,12 @@ class VersionUpdateNotifier {
         let shouldReload = false;
 
         // 根据配置的通知类型处理
+        // Handle according to configured notification type
         if (this.options.notifyType === 'custom' && this.options.onUpdate) {
           shouldReload = await this.options.onUpdate();
         } else {
           // 默认使用 confirm 提示
+          // Default to using confirm prompt
           shouldReload = confirm(this.options.promptMessage);
         }
 
@@ -211,12 +240,14 @@ class VersionUpdateNotifier {
       }
 
       // 继续下一轮检测
+        // Continue next round of detection
       this.autoRefresh();
     }, this.options.pollingInterval);
   }
 
   /**
    * 开始检测
+   * Start detection
    */
   public start() {
     this.log('开始版本更新检测');
@@ -229,6 +260,7 @@ class VersionUpdateNotifier {
 
   /**
    * 停止检测
+   * Stop detection
    */
   public stop() {
     this.log('停止版本更新检测');
@@ -241,6 +273,8 @@ class VersionUpdateNotifier {
   /**
    * 手动触发一次检测（不显示提示，仅返回是否有更新）
    * @returns 返回是否检测到更新
+   * Manually trigger a detection (no prompt, only returns whether update is detected)
+   * @returns Whether an update was detected
    */
   public async checkNow(): Promise<boolean> {
     this.log('手动触发检测（静默模式）');
@@ -251,6 +285,9 @@ class VersionUpdateNotifier {
    * 手动检测并提示用户更新
    * 适用于完全手动控制的场景，会显示更新提示并根据用户选择刷新页面
    * @returns 返回是否检测到更新
+   * Manually detect and prompt user for update
+   * Suitable for fully manually controlled scenarios, shows update prompt and refreshes page based on user selection
+   * @returns Whether an update was detected
    */
   public async checkUpdate(): Promise<boolean> {
     this.log('手动检测更新并提示');
@@ -287,6 +324,7 @@ class VersionUpdateNotifier {
 
   /**
    * 重置状态
+   * Reset status
    */
   public reset() {
     this.log('重置状态');
@@ -297,12 +335,14 @@ class VersionUpdateNotifier {
 
 /**
  * 创建一个版本更新检测器实例
+ * Create a version update detector instance
  */
 export function createUpdateNotifier(options?: UpdateNotifierOptions): VersionUpdateNotifier {
   return new VersionUpdateNotifier(options);
 }
 
 // 导出类，方便 TypeScript 用户使用类型
+// Export class for TypeScript users to use types
 export { VersionUpdateNotifier };
 
 export default VersionUpdateNotifier;
