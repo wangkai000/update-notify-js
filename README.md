@@ -17,8 +17,9 @@
 ## 📦 安装
 ```bash
 npm install @wangkai000/version-update-check
+# 或
 yarn add @wangkai000/version-update-check
-import { createUpdateNotifier, type UpdateNotifierOptions } from '@wangkai000/version-update-check';
+# 或
 pnpm add @wangkai000/version-update-check
 ```
 
