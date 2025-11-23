@@ -36,7 +36,27 @@ pnpm add web-version-checker
 <body>
   <script src="https://unpkg.com/web-version-checker/dist/index.umd.js"></script>
   <script>
-    WebVersionChecker.createUpdateNotifier({ pollingInterval: 60000 });
+    // Auto polling: check every minute, with logging and callbacks
+    WebVersionChecker.createUpdateNotifier({
+      pollingInterval: 60000,
+      debug: true,
+      onDetected: () => {
+        console.log('[web-version-checker] New version detected');
+      },
+      // Custom prompt: confirm then manually refresh (demo of location.reload)
+      notifyType: 'custom',
+      onUpdate: () => {
+        console.log('[web-version-checker] Ready to refresh page for update');
+        const ok = confirm('New version detected. Refresh page now to update?');
+        if (ok) {
+          // Manually refresh the page
+          location.reload();
+          // Return false to avoid plugin reloading again (we already refreshed)
+          return false;
+        }
+        return false;
+      }
+    });
   </script>
 </body>
 </html>
@@ -81,35 +101,29 @@ if (process.env.NODE_ENV === 'production') {
 ```
 
 ## Options (UpdateNotifierOptions)
-- pollingInterval: number | null
-  - Polling interval in ms. Default 10000.
-  - Set null or 0 to disable auto mode and use manual checks.
-- notifyType: 'confirm' | 'custom'
-  - Notification type. Default 'confirm'.
-- onUpdate: () => boolean | Promise<boolean>
-  - Custom prompt function. Return true to refresh.
-- onDetected: () => void
-  - Called when an update is detected.
-- pauseOnHidden: boolean
-  - Pause when page hidden. Default true.
-- immediate: boolean
-  - Start immediately. Default true (auto mode only).
-- indexPath: string
-  - Path to fetch page HTML. Default '/'.
-- scriptRegex: RegExp
-  - Regex to match script tags. Default /\<script.*src=["'](?<src>[^"']+)/gm
-- debug: boolean
-  - Print debug logs. Default false.
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| pollingInterval | number \| null | 10000 | Polling interval in ms. Set null or 0 to disable auto polling and use manual `checkUpdate`. |
+| notifyType | 'confirm' \| 'custom' | 'confirm' | Notification type. 'confirm' uses browser confirm; 'custom' requires `onUpdate`. |
+| onUpdate | () => boolean \| Promise<boolean> | - | Custom prompt function; return true to refresh, false to cancel. Used with `notifyType='custom'`. |
+| onDetected | () => void | - | Callback when an update is detected (does not affect refresh flow). |
+| pauseOnHidden | boolean | true | Pause detection when page is hidden (auto mode only). |
+| immediate | boolean | true | Start detection immediately (auto mode only). |
+| indexPath | string | '/' | Path to fetch page HTML. |
+| scriptRegex | RegExp | /\<script.*src=["'](?<src>[^"']+)/gm | Regex to extract script src list. |
+| debug | boolean | false | Print debug logs. |
 
 ## API
-- createUpdateNotifier(options?): WebVersionChecker
 
-Instance methods:
-- start(): start detection (auto)
-- stop(): stop detection (auto)
-- checkNow(): Promise<boolean> (silent check)
-- checkUpdate(): Promise<boolean> (check and prompt)
-- reset(): reset and stop
+| Name | Signature | Description | Notes |
+| --- | --- | --- | --- |
+| createUpdateNotifier | (options?: UpdateNotifierOptions) => WebVersionChecker | Create and return a detector instance | - |
+| start | () => void | Start detection | Auto mode only |
+| stop | () => void | Stop detection | Auto mode only |
+| checkNow | () => Promise<boolean> | Silent detection, returns whether update exists | - |
+| checkUpdate | () => Promise<boolean> | Manual detection and prompt, reload on confirm | Use in manual mode |
+| reset | () => void | Reset and stop detection | - |
 
 ## How it works
 1) Build changes script filenames in index.html (with hash)
