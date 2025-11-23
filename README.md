@@ -3,645 +3,151 @@
 [![npm version](https://img.shields.io/npm/v/web-version-checker.svg)](https://www.npmjs.com/package/web-version-checker)
 [![license](https://img.shields.io/npm/l/web-version-checker.svg)](https://github.com/yourusername/web-version-checker/blob/main/LICENSE)
 
-一个纯前端实现的版本更新自动提示刷新插件，无需后端配合。
+A pure front-end solution for automatic version update detection and refresh notification, no backend required.
 
-[English](./README.md) | [简体中文](./README.zh-CN.md)
+English | [简体中文](./README.zh-CN.md)
 
-## ✨ 特性
+## ✨ Features
 
-- 🚀 **纯前端实现** - 无需后端配合，通过轮询检测 HTML 中的 script 变化
-- 📦 **开箱即用** - 简单配置即可使用
-- 🎯 **TypeScript 支持** - 完整的类型定义
-- ⚙️ **高度可配置** - 支持自定义轮询间隔、提示方式等
-- 🎨 **自定义提示** - 支持自定义更新提示 UI
-- 🔄 **智能暂停** - 页面隐藏时自动暂停检测，节省资源
-- 📱 **多种引入方式** - 支持 ESM、CJS、UMD 多种模块格式
+- 🚀 **Pure Front-end** - No backend required, detects script changes in HTML through polling
+- 📦 **Out of the Box** - Simple configuration and ready to use
+- 🎯 **TypeScript Support** - Complete type definitions
+- ⚙️ **Highly Configurable** - Supports custom polling intervals, notification methods, etc.
+- 🎨 **Custom UI** - Supports custom update notification UI
+- 🔄 **Smart Pause** - Automatically pauses detection when page is hidden to save resources
+- 📱 **Multiple Import Methods** - Supports ESM, CJS, UMD module formats
 
-## 📦 安装
+## 📦 Installation
 
 ```bash
 npm install web-version-checker
 ```
 
-或使用 yarn:
+Or using yarn:
 
 ```bash
 yarn add web-version-checker
 ```
 
-或使用 pnpm:
+Or using pnpm:
 
 ```bash
 pnpm add web-version-checker
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 基础用法
+### Basic Usage
 
-在你的项目入口文件（如 `main.js` 或 `main.ts`）中引入：
+Import in your project entry file (e.g., `main.js` or `main.ts`):
 
 ```javascript
 import { createUpdateNotifier } from 'web-version-checker';
 
-// 创建检测器实例并自动开始检测
+// Create detector instance and start automatically
 const notifier = createUpdateNotifier();
 ```
 
-就这么简单！插件会自动每 10 秒检测一次版本更新，发现更新时会弹出确认框询问用户是否刷新。
+That's it! The plugin will automatically check for version updates every 10 seconds, and prompt users whether to refresh when an update is detected.
 
-### 两种使用模式
+### Two Usage Modes
 
-#### 模式 1：自动轮询模式（推荐）
+#### Mode 1: Auto Polling Mode (Recommended)
 
-插件自动定时检测，无需手动干预：
+Plugin automatically detects at regular intervals without manual intervention:
 
 ```javascript
 import { createUpdateNotifier } from 'web-version-checker';
 
-// 每分钟自动检测一次
+// Auto check every minute
 createUpdateNotifier({
-  pollingInterval: 60000  // 60000ms = 1分钟
+  pollingInterval: 60000  // 60000ms = 1 minute
 });
 ```
 
-#### 模式 2：完全手动模式
+#### Mode 2: Manual Mode
 
-禁用自动轮询，自己编写定时器控制检测时机：
+Disable auto polling and control detection timing with your own timer:
 
 ```javascript
 import { createUpdateNotifier } from 'web-version-checker';
 
-// 设置 pollingInterval 为 null 或 0 禁用自动轮询
+// Set pollingInterval to null or 0 to disable auto polling
 const notifier = createUpdateNotifier({
-  pollingInterval: null  // 或者 0
+  pollingInterval: null  // or 0
 });
 
-// 自己编写定时器，每分钟检测一次
+// Write your own timer, check every minute
 setInterval(async () => {
-  await notifier.checkUpdate();  // 检测并提示用户
+  await notifier.checkUpdate();  // Check and prompt user
 }, 60000);
 
-// 或者在特定事件触发时检测
+// Or trigger check on specific events
 button.addEventListener('click', async () => {
   const hasUpdate = await notifier.checkUpdate();
   if (!hasUpdate) {
-    alert('当前已是最新版本');
+    alert('Already on the latest version');
   }
 });
 ```
 
-> **为什么需要手动模式？**
+> **Why Manual Mode?**
 > 
-> 手动模式让你完全控制检测时机，适用于：
-> - 需要复杂的检测逻辑（如：只在特定时间段检测）
-> - 根据用户活跃度动态调整检测频率
-> - 与其他业务逻辑深度集成
+> Manual mode gives you complete control over detection timing, suitable for:
+> - Complex detection logic (e.g., check only during specific time periods)
+> - Dynamically adjust detection frequency based on user activity
+> - Deep integration with other business logic
 
 ---
 
-## 📚 不同框架使用指南
+## 📚 For Detailed Documentation
 
-### 原生 HTML + JavaScript
-
-#### 方式 1：使用 UMD 版本（无需构建工具）
-
-```html
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <title>版本更新检测</title>
-</head>
-<body>
-  <h1>我的应用</h1>
-  
-  <!-- 引入 UMD 版本 -->
-  <script src="https://unpkg.com/web-version-checker/dist/index.umd.js"></script>
-  <script>
-    // 通过全局变量 WebVersionChecker 使用
-    WebVersionChecker.createUpdateNotifier({
-      pollingInterval: 60000,  // 每分钟检测
-      debug: true
-    });
-  </script>
-</body>
-</html>
-```
-
-#### 方式 2：使用 ES Module（现代浏览器）
-
-```html
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <title>版本更新检测</title>
-</head>
-<body>
-  <h1>我的应用</h1>
-  
-  <script type="module">
-    import { createUpdateNotifier } from 'https://unpkg.com/web-version-checker/dist/index.esm.js';
-    
-    // 自动轮询模式
-    createUpdateNotifier({
-      pollingInterval: 60000
-    });
-  </script>
-</body>
-</html>
-```
-
-#### 方式 3：手动模式示例
-
-```html
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <title>版本更新检测 - 手动模式</title>
-</head>
-<body>
-  <h1>我的应用</h1>
-  <button id="checkBtn">检查更新</button>
-  
-  <script src="https://unpkg.com/web-version-checker/dist/index.umd.js"></script>
-  <script>
-    // 手动模式
-    const notifier = WebVersionChecker.createUpdateNotifier({
-      pollingInterval: null,  // 禁用自动轮询
-      debug: true
-    });
-    
-    // 点击按钮时检测
-    document.getElementById('checkBtn').addEventListener('click', async () => {
-      const hasUpdate = await notifier.checkUpdate();
-      if (!hasUpdate) {
-        alert('当前已是最新版本');
-      }
-    });
-    
-    // 或者自己编写定时器，每 2 分钟检测一次
-    setInterval(async () => {
-      await notifier.checkUpdate();
-    }, 2 * 60 * 1000);
-  </script>
-</body>
-</html>
-```
+For complete usage guide with framework examples (Vue, React, HTML), please refer to:
+- **Chinese**: [README.zh-CN.md](./README.zh-CN.md) - 完整中文文档，包含所有框架示例
 
 ---
 
-### Vue 3 + JavaScript
-
-#### main.js
-
-```javascript
-import { createApp } from 'vue';
-import App from './App.vue';
-import { createUpdateNotifier } from 'web-version-checker';
-
-const app = createApp(App);
-app.mount('#app');
-
-// 仅在生产环境启用
-if (import.meta.env.PROD) {
-  // 自动轮询模式
-  createUpdateNotifier({
-    pollingInterval: 60000,  // 每分钟检测一次
-    onDetected: () => {
-      console.log('检测到新版本！');
-    }
-  });
-}
-```
-
-#### 使用 Element Plus 自定义提示
-
-```javascript
-import { createApp } from 'vue';
-import App from './App.vue';
-import ElementPlus from 'element-plus';
-import { ElMessageBox } from 'element-plus';
-import { createUpdateNotifier } from 'web-version-checker';
-
-const app = createApp(App);
-app.use(ElementPlus);
-app.mount('#app');
-
-if (import.meta.env.PROD) {
-  createUpdateNotifier({
-    pollingInterval: 60000,
-    notifyType: 'custom',
-    onUpdate: async () => {
-      try {
-        await ElMessageBox.confirm(
-          '发现新版本，是否立即更新？',
-          '版本更新',
-          {
-            confirmButtonText: '立即更新',
-            cancelButtonText: '稍后再说',
-            type: 'info'
-          }
-        );
-        return true;
-      } catch {
-        return false;
-      }
-    }
-  });
-}
-```
-
-#### 手动模式示例
-
-```javascript
-import { createApp } from 'vue';
-import App from './App.vue';
-import { createUpdateNotifier } from 'web-version-checker';
-
-const app = createApp(App);
-app.mount('#app');
-
-if (import.meta.env.PROD) {
-  // 手动模式
-  const notifier = createUpdateNotifier({
-    pollingInterval: null  // 禁用自动轮询
-  });
-  
-  // 自己控制检测时机，每 2 分钟检测一次
-  setInterval(async () => {
-    await notifier.checkUpdate();
-  }, 2 * 60 * 1000);
-  
-  // 也可以在全局暴露，在组件中手动调用
-  app.config.globalProperties.$checkUpdate = () => notifier.checkUpdate();
-}
-```
-
----
-
-### Vue 3 + TypeScript
-
-#### main.ts
-
-```typescript
-import { createApp } from 'vue';
-import App from './App.vue';
-import { createUpdateNotifier } from 'web-version-checker';
-import type { UpdateNotifierOptions } from 'web-version-checker';
-
-const app = createApp(App);
-app.mount('#app');
-
-if (import.meta.env.PROD) {
-  // 自动轮询模式，带类型提示
-  const options: UpdateNotifierOptions = {
-    pollingInterval: 60000,
-    notifyType: 'confirm',
-    debug: false,
-    onDetected: () => {
-      console.log('检测到新版本！');
-    }
-  };
-  
-  createUpdateNotifier(options);
-}
-```
-
-#### 使用 Element Plus + TypeScript
-
-```typescript
-import { createApp } from 'vue';
-import App from './App.vue';
-import ElementPlus from 'element-plus';
-import { ElMessageBox } from 'element-plus';
-import { createUpdateNotifier } from 'web-version-checker';
-import type { UpdateNotifierOptions } from 'web-version-checker';
-
-const app = createApp(App);
-app.use(ElementPlus);
-app.mount('#app');
-
-if (import.meta.env.PROD) {
-  const options: UpdateNotifierOptions = {
-    pollingInterval: 60000,
-    notifyType: 'custom',
-    onUpdate: async (): Promise<boolean> => {
-      try {
-        await ElMessageBox.confirm(
-          '发现新版本，是否立即更新？',
-          '版本更新',
-          {
-            confirmButtonText: '立即更新',
-            cancelButtonText: '稍后再说',
-            type: 'info'
-          }
-        );
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    onDetected: (): void => {
-      console.log('检测到新版本！');
-    }
-  };
-  
-  createUpdateNotifier(options);
-}
-```
-
-#### 手动模式 + TypeScript
-
-```typescript
-import { createApp } from 'vue';
-import App from './App.vue';
-import { createUpdateNotifier } from 'web-version-checker';
-import type { WebVersionChecker } from 'web-version-checker';
-
-const app = createApp(App);
-app.mount('#app');
-
-if (import.meta.env.PROD) {
-  // 手动模式，带类型
-  const notifier: WebVersionChecker = createUpdateNotifier({
-    pollingInterval: null
-  });
-  
-  // 每 3 分钟检测一次
-  setInterval(async (): Promise<void> => {
-    await notifier.checkUpdate();
-  }, 3 * 60 * 1000);
-}
-```
-
----
-
-### React + JavaScript
-
-#### index.jsx
-
-```javascript
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import { createUpdateNotifier } from 'web-version-checker';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-// 仅在生产环境启用
-if (process.env.NODE_ENV === 'production') {
-  // 自动轮询模式
-  createUpdateNotifier({
-    pollingInterval: 60000,  // 每分钟检测
-    onDetected: () => {
-      console.log('检测到新版本！');
-    }
-  });
-}
-```
-
-#### 使用 Ant Design 自定义提示
-
-```javascript
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Modal } from 'antd';
-import App from './App';
-import { createUpdateNotifier } from 'web-version-checker';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-if (process.env.NODE_ENV === 'production') {
-  createUpdateNotifier({
-    pollingInterval: 60000,
-    notifyType: 'custom',
-    onUpdate: () => {
-      return new Promise((resolve) => {
-        Modal.confirm({
-          title: '版本更新',
-          content: '发现新版本，是否立即更新？',
-          okText: '立即更新',
-          cancelText: '稍后再说',
-          onOk: () => resolve(true),
-          onCancel: () => resolve(false)
-        });
-      });
-    }
-  });
-}
-```
-
-#### 手动模式示例
-
-```javascript
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import { createUpdateNotifier } from 'web-version-checker';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-if (process.env.NODE_ENV === 'production') {
-  // 手动模式
-  const notifier = createUpdateNotifier({
-    pollingInterval: null
-  });
-  
-  // 每 2 分钟检测一次
-  setInterval(async () => {
-    await notifier.checkUpdate();
-  }, 2 * 60 * 1000);
-  
-  // 暴露到 window，方便在组件中调用
-  window.checkUpdate = () => notifier.checkUpdate();
-}
-```
-
----
-
-### React + TypeScript
-
-#### index.tsx
-
-```typescript
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import { createUpdateNotifier } from 'web-version-checker';
-import type { UpdateNotifierOptions } from 'web-version-checker';
-
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-if (process.env.NODE_ENV === 'production') {
-  // 自动轮询模式，带类型
-  const options: UpdateNotifierOptions = {
-    pollingInterval: 60000,
-    debug: false,
-    onDetected: (): void => {
-      console.log('检测到新版本！');
-    }
-  };
-  
-  createUpdateNotifier(options);
-}
-```
-
-#### 使用 Ant Design + TypeScript
-
-```typescript
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Modal } from 'antd';
-import App from './App';
-import { createUpdateNotifier } from 'web-version-checker';
-import type { UpdateNotifierOptions } from 'web-version-checker';
-
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-if (process.env.NODE_ENV === 'production') {
-  const options: UpdateNotifierOptions = {
-    pollingInterval: 60000,
-    notifyType: 'custom',
-    onUpdate: async (): Promise<boolean> => {
-      return new Promise<boolean>((resolve) => {
-        Modal.confirm({
-          title: '版本更新',
-          content: '发现新版本，是否立即更新？',
-          okText: '立即更新',
-          cancelText: '稍后再说',
-          onOk: (): void => resolve(true),
-          onCancel: (): void => resolve(false)
-        });
-      });
-    },
-    onDetected: (): void => {
-      console.log('检测到新版本！');
-    }
-  };
-  
-  createUpdateNotifier(options);
-}
-```
-
-#### 手动模式 + TypeScript
-
-```typescript
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import { createUpdateNotifier } from 'web-version-checker';
-import type { WebVersionChecker } from 'web-version-checker';
-
-// 扩展 Window 类型
-declare global {
-  interface Window {
-    checkUpdate: () => Promise<boolean>;
-  }
-}
-
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-if (process.env.NODE_ENV === 'production') {
-  // 手动模式，带完整类型
-  const notifier: WebVersionChecker = createUpdateNotifier({
-    pollingInterval: null
-  });
-  
-  // 每 3 分钟检测一次
-  setInterval(async (): Promise<void> => {
-    await notifier.checkUpdate();
-  }, 3 * 60 * 1000);
-  
-  // 暴露到 window
-  window.checkUpdate = (): Promise<boolean> => notifier.checkUpdate();
-}
-```
-
----
-
-## ⚙️ 配置选项
+## ⚙️ Configuration Options
 
 ```typescript
 interface UpdateNotifierOptions {
   /** 
-   * 轮询间隔时间，单位毫秒，默认 10000ms (10秒)
-   * 设置为 null 或 0 则禁用自动轮询（需手动调用 checkUpdate）
+   * Polling interval in milliseconds, default 10000ms (10 seconds)
+   * Set to null or 0 to disable auto polling (requires manual checkUpdate call)
    */
   pollingInterval?: number | null;
   
-  /** 提示用户更新的方式，默认 'confirm' */
+  /** Notification type, default 'confirm' */
   notifyType?: 'confirm' | 'custom';
   
-  /** 自定义提示函数，返回 true 表示确认刷新 */
+  /** Custom notification function, return true to confirm refresh */
   onUpdate?: () => boolean | Promise<boolean>;
   
-  /** 检测到更新时的回调 */
+  /** Callback when update detected */
   onDetected?: () => void;
   
-  /** 是否在页面隐藏时暂停检测，默认 true（仅在自动轮询模式下有效） */
+  /** Pause detection when page hidden, default true (only effective in auto polling mode) */
   pauseOnHidden?: boolean;
   
-  /** 是否立即开始检测，默认 true（仅在自动轮询模式下有效） */
+  /** Start detection immediately, default true (only effective in auto polling mode) */
   immediate?: boolean;
   
-  /** 自定义请求路径，默认 '/' */
+  /** Custom request path, default '/' */
   indexPath?: string;
   
-  /** script 标签正则匹配，用于自定义匹配规则 */
+  /** RegExp for matching script tags */
   scriptRegex?: RegExp;
   
-  /** 是否在控制台输出日志，默认 false */
+  /** Output logs to console, default false */
   debug?: boolean;
 }
 ```
 
-## 📖 高级用法
+## 📖 Advanced Usage
 
-### 自定义更新提示 UI
+### Custom Update Notification UI
 
-使用自定义提示替代默认的 `confirm` 对话框：
+Use custom notification to replace default `confirm` 对话框：
 
 ```javascript
 import { createUpdateNotifier } from 'web-version-checker';
@@ -662,12 +168,12 @@ createUpdateNotifier({
       .catch(() => false);
   },
   onDetected: () => {
-    console.log('🎉 检测到新版本！');
+    console.log('🎉 New version detected！');
   }
 });
 ```
 
-### 手动控制检测
+### Manual Control
 
 ```javascript
 import { createUpdateNotifier } from 'web-version-checker';
@@ -680,7 +186,7 @@ const notifier = createUpdateNotifier({
 notifier.start();  // 手动开始
 notifier.stop();   // 暂停检测
 
-// checkNow: 仅检测，不显示提示
+// checkNow: 仅检测，No提示
 const hasUpdate = await notifier.checkNow();
 if (hasUpdate) {
   console.log('有新版本');
@@ -688,7 +194,7 @@ if (hasUpdate) {
 
 notifier.reset();  // 重置状态
 
-// 方式 2：完全手动模式 - 自己控制定时器
+// 方式 2：full manual mode - 自己控制定时器
 const manualNotifier = createUpdateNotifier({
   pollingInterval: null  // 禁用自动轮询
 });
@@ -705,58 +211,58 @@ button.onclick = async () => {
 };
 ```
 
-### 在特定条件下启用
+### Enable Under Specific Conditions
 
 ```javascript
 import { createUpdateNotifier } from 'web-version-checker';
 
-// 仅在生产环境启用
+// Enable only in production
 if (process.env.NODE_ENV === 'production') {
   createUpdateNotifier({
-    pollingInterval: 60000, // 生产环境降低检测频率
-    pauseOnHidden: true // 页面隐藏时暂停
+    pollingInterval: 60000, // Lower detection frequency in production
+    pauseOnHidden: true // Pause when page hidden
   });
 }
 ```
 
-### 自定义检测规则
+### Custom Detection Rules
 
 ```javascript
 import { createUpdateNotifier } from 'web-version-checker';
 
 createUpdateNotifier({
-  // 自定义 script 匹配规则
+  // Custom script matching rule
   scriptRegex: /\<script.*src=["'](?<src>[^"']+\.js)/gm,
   
-  // 自定义请求路径
+  // Custom request path
   indexPath: '/index.html'
 });
 ```
 
-## 🔍 工作原理
+## 🔍 How It Works
 
-1. **版本标识**: 每次打包后，`index.html` 中的 script 文件名都会变化（通常包含哈希值）
-2. **轮询检测**: 定时获取最新的 `index.html` 内容
-3. **对比分析**: 提取并对比 script 文件列表
-4. **更新提示**: 发现变化时提示用户刷新页面
+1. **Version Identification**: 每次打包后，`index.html` 中的 script 文件名都会变化（通常包含哈希值）
+2. **Polling Detection**: 定时获取最新的 `index.html` 内容
+3. **Comparison Analysis**: 提取并对比 script 文件列表
+4. **Update Notification**: 发现变化时提示用户刷新页面
 
 ## 📝 API
 
 ### createUpdateNotifier(options?)
 
-创建并返回一个版本更新检测器实例。
+Create and return a version update detector instance。
 
-**参数:**
-- `options` - 可选的配置对象
+**Parameters:**
+- `options` - Optional configuration object
 
-**返回:**
+**Returns:**
 - `WebVersionChecker` 实例
 
-### WebVersionChecker 实例方法
+### WebVersionChecker Instance Methods
 
 #### start()
 
-开始版本检测（仅在自动轮询模式下有效）。
+Start version detection（Only effective in auto polling mode）。
 
 ```javascript
 const notifier = createUpdateNotifier({ immediate: false });
@@ -765,7 +271,7 @@ notifier.start();
 
 #### stop()
 
-停止版本检测（仅在自动轮询模式下有效）。
+Stop version detection（Only effective in auto polling mode）。
 
 ```javascript
 notifier.stop();
@@ -773,26 +279,26 @@ notifier.stop();
 
 #### checkNow()
 
-手动触发一次检测，**仅返回是否有更新，不显示提示**。
+Manually trigger a detection，**仅Returns是否有更新，No提示**。
 
-**返回:** `Promise<boolean>` - `true` 表示有更新，`false` 表示无更新
+**Returns:** `Promise<boolean>` - `true` indicates update available，`false` indicates no update
 
 ```javascript
 const hasUpdate = await notifier.checkNow();
 if (hasUpdate) {
-  console.log('检测到新版本');
-  // 自己处理，比如显示自定义通知
+  console.log('New version detected');
+  // Handle it yourself, e.g. show custom notification
 }
 ```
 
 #### checkUpdate()
 
-手动检测并提示用户更新。适用于**完全手动模式**，会显示更新提示并根据用户选择刷新页面。
+Manually check and prompt user to update。Suitable for**full manual mode**，会YesUpdate Notification并根据用户选择刷新页面。
 
-**返回:** `Promise<boolean>` - `true` 表示有更新，`false` 表示无更新
+**Returns:** `Promise<boolean>` - `true` indicates update available，`false` indicates no update
 
 ```javascript
-// 完全手动模式
+// full manual mode
 const notifier = createUpdateNotifier({ pollingInterval: null });
 
 // 自己编写定时器
@@ -811,7 +317,7 @@ button.onclick = async () => {
 
 #### reset()
 
-重置检测状态并停止检测。
+Reset detection state and stop detection。
 
 ```javascript
 notifier.reset();
@@ -819,44 +325,44 @@ notifier.reset();
 
 ---
 
-**方法对比：**
+**Method Comparison：**
 
-| 方法 | 是否显示提示 | 适用场景 |
+| 方法 | Show Notification | Use Cases |
 |------|------------|----------|
-| `checkNow()` | ✖️ 不显示 | 静默检测，自己处理更新逻辑 |
-| `checkUpdate()` | ✔️ 显示 | 手动模式，自动提示用户更新 |
+| `checkNow()` | ✖️ No | Silent detection, handle update logic yourself |
+| `checkUpdate()` | ✔️ Yes | Manual mode, automatically prompt user to update |
 
-## 🎯 使用场景
+## 🎯 Use Cases
 
-- ✅ 单页应用（SPA）的版本更新提示
-- ✅ 需要及时推送更新的 Web 应用
-- ✅ 不希望用户长时间停留在旧版本
-- ✅ 无后端支持的纯静态网站
+- ✅ 单页应用（SPA）的版本Update Notification
+- ✅ Web applications that need timely update notifications
+- ✅ Don't want users to stay on old versions for long
+- ✅ Pure static websites without backend support
 
-## ⚠️ 注意事项
+## ⚠️ Notes
 
-1. **生产环境使用**: 建议仅在生产环境启用，开发环境可能会频繁触发更新提示
-2. **轮询间隔**: 根据实际需求设置合理的轮询间隔，避免过于频繁的请求
-3. **缓存问题**: 请求 `index.html` 时已添加时间戳参数避免缓存
-4. **构建工具**: 确保你的构建工具（如 Webpack、Vite）会为 script 文件生成哈希值
+1. **Production Use**: 建议Enable only in production，开发环境可能会频繁触发Update Notification
+2. **轮询间隔**: Set reasonable polling intervals based on actual needs, avoid too frequent requests
+3. **Cache Issues**: Request `index.html` 时已添加时间戳Parameters避免缓存
+4. **Build Tools**: 确保你的Build Tools（如 Webpack、Vite）会为 script 文件生成哈希值
 
-## 🔧 浏览器兼容性
+## 🔧 Browser Compatibility
 
-支持所有现代浏览器，需要以下 API 支持：
+Supports all modern browsers, requires the following API support：
 
 - `fetch`
 - `Promise`
 - `setTimeout`
-- `document.visibilitychange` (可选)
+- `document.visibilitychange` (optional)
 
 ## 📄 License
 
 MIT License
 
-## 🤝 贡献
+## 🤝 Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Issues and Pull Requests are welcome!
 
-## 📮 反馈
+## 📮 Feedback
 
-如果你有任何问题或建议，欢迎提交 [Issue](https://github.com/yourusername/web-version-checker/issues)。
+If you have any questions or suggestions, feel free to submit [Issue](https://github.com/yourusername/web-version-checker/issues)。
