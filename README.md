@@ -248,6 +248,7 @@ if (process.env.NODE_ENV === 'production') {
 | `immediate` | `boolean` | `true` | 是否立即开始检测（仅在自动轮询模式下有效） |
 | `indexPath` | `string \| string[]` | `'/'` | 自定义请求路径，可以是单个路径字符串或路径数组。在微前端场景中，可以配置多个子应用入口路径进行统一检测 |
 | `scriptRegex` | `RegExp` | `/<script.*src=["'](?<src>[^"']+)/gm` | script 标签正则匹配，用于自定义匹配规则 |
+| `excludeScripts` | `string[] \| RegExp` | `undefined` | 需要排除的脚本路径列表，支持字符串数组（支持 * 和 ? 通配符）或正则表达式 |
 | `debug` | `boolean` | `false` | 是否在控制台输出日志 |
 | `promptMessage` | `string` | `'检测到新版本，点击确定将刷新页面并更新'` | 默认 confirm 提示文案（用于 `notifyType='confirm'`） |
 | `cacheControl` | `RequestCache` | `'no-cache'` | fetch 请求的缓存控制选项，默认为 'no-cache'，确保获取最新内容 |

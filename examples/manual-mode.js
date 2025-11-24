@@ -49,25 +49,44 @@ const customNotifier = createUpdateNotifier({
     return await showMyCustomDialog();
   },
   onDetected: () => {
-    console.log('🎉 检测到新版本！');
-    // 发送统计数据
-    analytics.track('version_update_detected');
+    console.log('检测到新版本，即将显示自定义对话框');
   }
 });
 
-// 在用户完成关键操作后检测
-async function onUserFinishImportantTask() {
-  console.log('任务完成，检测更新...');
-  await customNotifier.checkUpdate();
-}
 
-// 每隔 5 分钟检测一次
-setInterval(() => {
-  customNotifier.checkUpdate();
-}, 5 * 60 * 1000);
+// ==================== 方式 4: 结合 excludeScripts 的手动检测 ====================
+const excludedNotifier = createUpdateNotifier({
+  pollingInterval: null,  // 禁用自动轮询
+  debug: true,
+  // 排除第三方库和CDN资源，只检测应用核心脚本
+  excludeScripts: [
+    'https://cdn.jsdelivr.net/npm/*',
+    '/assets/libs/*.js',
+    '/public/vendors/*.js',
+    '/sw.js'
+  ]
+});
 
+// 手动触发检测，只关注应用核心脚本变化
+document.getElementById('checkCoreUpdateBtn')?.addEventListener('click', async () => {
+  console.log('开始检测核心脚本更新（已排除第三方库）...');
+  const hasUpdate = await excludedNotifier.checkUpdate();
+  if (!hasUpdate) {
+    alert('核心应用脚本已是最新版本');
+  }
+});
 
-// ==================== 方式 4: 混合模式 - 手动触发 + 条件检测 ====================
+// 静默检测 - 每小时检查一次核心脚本
+setInterval(async () => {
+  console.log('执行定时静默检测...');
+  const hasUpdate = await excludedNotifier.checkNow();
+  if (hasUpdate) {
+    console.log('核心应用脚本有更新，准备通知用户');
+    // 这里可以显示自定义通知
+  }
+}, 3600000); // 每小时
+
+// ==================== 混合模式 - 手动触发 + 条件检测 ====================
 const hybridNotifier = createUpdateNotifier({
   pollingInterval: null,
   debug: true

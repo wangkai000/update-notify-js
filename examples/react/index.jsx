@@ -29,6 +29,14 @@ function setupVersionUpdateNotifier() {
       debug: false,
       notifyType: 'custom', // 使用自定义通知
       
+      // 排除第三方库和CDN资源，只检测应用核心代码更新
+      excludeScripts: [
+        'https://cdn.jsdelivr.net/npm/*',
+        'https://unpkg.com/*',
+        '/static/js/vendors~*.js',
+        '/analytics.js'
+      ],
+      
       // 检测到新版本时的回调
       onDetected: () => {
         console.log('🎉 检测到新版本！');

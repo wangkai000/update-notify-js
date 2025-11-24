@@ -31,6 +31,9 @@ export interface UpdateNotifierOptions {
   /** script 标签正则匹配，用于自定义匹配规则 */
   /** Regular expression for script tag matching, for custom matching rules */
   scriptRegex?: RegExp;
+  /** 需要排除的脚本路径列表，支持字符串数组（支持glob模式）或正则表达式 */
+  /** List of script paths to exclude, supports string array (with glob patterns) or regular expression */
+  excludeScripts?: string[] | RegExp;
   /** 是否在控制台输出日志，默认 false */
   /** Whether to output logs to console, default false */
   debug?: boolean;
@@ -46,8 +49,9 @@ export interface UpdateNotifierOptions {
  * 版本更新检测配置选项（内部使用）
  * Version update detection configuration options (internal use)
  */
-interface InternalOptions extends Omit<UpdateNotifierOptions, 'pollingInterval'> {
+interface InternalOptions extends Omit<UpdateNotifierOptions, 'pollingInterval' | 'excludeScripts'> {
   pollingInterval: number;
+  excludeScripts?: string[] | RegExp;
 }
 
 /**
@@ -62,6 +66,7 @@ class VersionUpdateNotifier {
   
   private options: Required<InternalOptions>;
   private scriptReg: RegExp;
+  private excludeScripts: string[] | RegExp | null = null;
 
   constructor(options: UpdateNotifierOptions = {}) {
     // 处理 pollingInterval 为 null 或 0 的情况
@@ -82,12 +87,14 @@ class VersionUpdateNotifier {
       immediate: options.immediate !== false,
       indexPath: options.indexPath || '/',
       scriptRegex: options.scriptRegex || /\<script.*src=["'](?<src>[^"]+)/gm,
+      excludeScripts: options.excludeScripts || undefined,
       debug: options.debug || false,
       promptMessage: options.promptMessage || '检测到新版本，点击确定将刷新页面并更新',
       cacheControl: options.cacheControl || 'no-cache'
-    };
+    } as Required<InternalOptions>;
 
     this.scriptReg = this.options.scriptRegex;
+    this.excludeScripts = this.options.excludeScripts || null;
 
     // 仅在自动轮询模式下设置页面可见性监听
     // Set up page visibility listener only in auto polling mode
@@ -154,16 +161,9 @@ class VersionUpdateNotifier {
             cache: this.options.cacheControl || 'no-cache'
           }).then(res => res.text());
           
-          this.scriptReg.lastIndex = 0; // 重置正则下标
-          
-          let match: RegExpExecArray | null;
-          while ((match = this.scriptReg.exec(html))) {
-            if (match.groups?.src) {
-              // 添加路径标识，避免不同路径下相同文件名的脚本冲突
-              const scriptId = `${path}::${match.groups.src}`;
-              allScripts.push(scriptId);
-            }
-          }
+          // 使用内部的extractNewScripts方法提取脚本
+          const scripts = this.extractScriptsFromHtml(html, path);
+          allScripts.push(...scripts);
         } catch (error) {
           console.error(`[VersionUpdateNotifier] 获取路径 ${path} 内容失败:`, error);
           // 继续尝试其他路径，不中断
@@ -176,6 +176,76 @@ class VersionUpdateNotifier {
       console.error('[VersionUpdateNotifier] 脚本提取过程发生错误:', error);
       return [];
     }
+  }
+  
+  /**
+   * 从HTML文本中提取脚本src列表
+   * @param html HTML文本
+   * @param path 当前路径，用于标识脚本来源
+   * @returns 脚本src列表
+   */
+  private extractScriptsFromHtml(html: string, path: string): string[] {
+    // 重置正则下标
+    this.scriptReg.lastIndex = 0;
+    
+    // 提取所有匹配的src
+    const srcs: string[] = [];
+    let match: RegExpExecArray | null;
+    
+    while ((match = this.scriptReg.exec(html)) !== null) {
+      const src = match.groups?.src;
+      if (src && !this.shouldExcludeScript(src)) {
+        // 添加路径标识，避免不同路径下相同文件名的脚本冲突
+        const scriptId = `${path}::${src}`;
+        srcs.push(scriptId);
+      }
+    }
+    
+    return srcs;
+  }
+  
+  /**
+   * 检查脚本是否应该被排除
+   * @param scriptPath 脚本路径
+   * @returns 是否应该排除该脚本
+   */
+  private shouldExcludeScript(scriptPath: string): boolean {
+    if (!this.excludeScripts) {
+      return false;
+    }
+    
+    if (this.excludeScripts instanceof RegExp) {
+      return this.excludeScripts.test(scriptPath);
+    }
+    
+    if (Array.isArray(this.excludeScripts)) {
+      for (const pattern of this.excludeScripts) {
+        // 简单的glob匹配实现
+        if (this.matchGlob(pattern, scriptPath)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+  
+  /**
+   * 简单的glob模式匹配
+   * @param pattern glob模式
+   * @param str 要匹配的字符串
+   * @returns 是否匹配
+   */
+  private matchGlob(pattern: string, str: string): boolean {
+    // 将glob模式转换为正则表达式
+    // 简单实现，支持 * 和 ? 通配符
+    const regexPattern = pattern
+      .replace(/\./g, '\\.') // 转义点号
+      .replace(/\*/g, '.*')   // 将 * 替换为 .*
+      .replace(/\?/g, '.');   // 将 ? 替换为 .
+    
+    const regex = new RegExp(`^${regexPattern}$`, 'i');
+    return regex.test(str);
   }
 
   /**

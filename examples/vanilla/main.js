@@ -155,4 +155,24 @@ setTimeout(() => {
 }, 5000);
 
 // 导出供外部使用
-export { notifier, advancedNotifier, manualNotifier };
+export { notifier, advancedNotifier, manualNotifier, excludedNotifier };
+
+/**
+ * 示例 5: 使用 excludeScripts 排除特定脚本
+ * 配置排除第三方库和CDN资源，只关注应用核心脚本
+ */
+const excludedNotifier = createUpdateNotifier({
+  pollingInterval: 60000, // 1分钟检测一次
+  debug: true,
+  // 排除第三方库、CDN资源和Service Worker
+  excludeScripts: [
+    'https://cdn.jsdelivr.net/npm/*',
+    'https://unpkg.com/*',
+    '/assets/vendor/*.js',
+    '/analytics.js',
+    '/sw.js'
+  ],
+  onDetected: () => {
+    console.log('🎯 排除脚本示例 - 检测到应用核心脚本有更新！');
+  }
+});

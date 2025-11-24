@@ -239,7 +239,8 @@ if (process.env.NODE_ENV === 'production') {
 | `pauseOnHidden` | `boolean` | `true` | Whether to pause detection when page is hidden (only effective in auto-polling mode) |
 | `immediate` | `boolean` | `true` | Whether to start detection immediately (only effective in auto-polling mode) |
 | `indexPath` | `string \| string[]` | `'/'` | Custom request path, can be a single string or an array of paths. In micro-frontend scenarios, you can configure multiple sub-application entry paths for unified detection |
-| `scriptRegex` | `RegExp` | `/<script.*src=["'](?<src>[^"']+)/gm` | Script tag regex pattern for custom matching rules |
+| `scriptRegex` | `RegExp` | `/<script.*src=["'](?<src>[^"]+)/gm` | Script tag regex pattern for custom matching rules |
+| `excludeScripts` | `string[] \| RegExp` | `undefined` | List of script paths to exclude, supports string array (with * and ? wildcards) or regular expression |
 | `debug` | `boolean` | `false` | Whether to output logs to console |
 | `promptMessage` | `string` | `'New version detected. Click OK to refresh and update'` | Default confirm prompt message (used for `notifyType='confirm'`) |
 | `cacheControl` | `RequestCache` | `'no-cache'` | Cache control option for fetch request, defaults to 'no-cache' to ensure getting the latest content |

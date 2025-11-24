@@ -50,12 +50,38 @@ const notifier4 = createUpdateNotifier({
 // 5 秒后开始检测
 setTimeout(() => {
   notifier4.start();
+  console.log('延迟启动的自动检测已开始');
 }, 5000);
 
 
-// ==================== 方式 5: 可以手动控制的自动检测 ====================
+// ==================== 方式 5: 使用 excludeScripts 排除特定脚本 ====================
 const notifier5 = createUpdateNotifier({
-  pollingInterval: 60000
+  pollingInterval: 60000,
+  debug: true,
+  // 排除第三方库、CDN资源和分析脚本，只关注应用核心脚本
+  excludeScripts: [
+    'https://cdn.jsdelivr.net/npm/react/*',
+    'https://cdn.jsdelivr.net/npm/react-dom/*',
+    'https://cdn.jsdelivr.net/npm/axios/*',
+    'https://analytics.example.com/*.js',
+    '/assets/vendor/*.js',
+    '/sw.js'  // 排除 Service Worker 脚本
+  ],
+  onDetected: () => {
+    console.log('检测到应用核心脚本有更新！');
+  }
+});
+
+
+// ==================== 方式 6: 使用正则表达式排除脚本 ====================
+const notifier6 = createUpdateNotifier({
+  pollingInterval: 60000,
+  debug: true,
+  // 使用正则表达式排除常见的第三方库和CDN资源
+  excludeScripts: /(https?:\/\/(cdn|unpkg|jsdelivr)\.com\/|\/assets\/(vendor|libs)\/|\.hot-update\.js|\.map)$/,
+  onDetected: () => {
+    console.log('检测到应用脚本有更新（已排除第三方库）！');
+  }
 });
 
 // 在某些情况下停止检测
