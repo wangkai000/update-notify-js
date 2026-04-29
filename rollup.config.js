@@ -8,19 +8,23 @@ module.exports = {
     {
       file: 'dist/index.cjs.js',
       format: 'cjs',
-      exports: 'auto'
+      exports: 'named'
     },
     {
       file: 'dist/index.esm.js',
-      format: 'esm'
+      format: 'esm',
+      exports: 'named'
     },
     {
       file: 'dist/index.umd.js',
       format: 'umd',
       name: 'WebVersionChecker',
-      globals: {}
+      globals: {
+        // 明确告诉 Rollup 这些外部依赖的全局变量名
+      }
     }
   ],
+  external: [],
   plugins: [
     resolve(),
     commonjs(),
