@@ -19,6 +19,7 @@ module.exports = {
       file: 'dist/index.umd.js',
       format: 'umd',
       name: 'WebVersionChecker',
+      exports: 'named',
       globals: {
         // 明确告诉 Rollup 这些外部依赖的全局变量名
       }

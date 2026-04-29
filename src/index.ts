@@ -341,6 +341,4 @@ export function createUpdateNotifier(options?: UpdateNotifierOptions): VersionUp
   return new VersionUpdateNotifier(options);
 }
 
-// 导出类，方便 TypeScript 用户使用类型
 export { VersionUpdateNotifier };
-export default { createUpdateNotifier, VersionUpdateNotifier };
