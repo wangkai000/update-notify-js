@@ -70,7 +70,7 @@ if (process.env.NODE_ENV === 'production') {
   ```html
   <script src="path/to/index.umd.js"></script>
   <script>
-    const notifier = VersionUpdateCheck.createUpdateNotifier({
+    const notifier = WebVersionChecker.createUpdateNotifier({
       pollingInterval: 60000
     });
   </script>
