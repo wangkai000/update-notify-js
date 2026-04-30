@@ -1,9 +1,6 @@
 # update-notify-js
 
-<div align="center">
-  <a href="./README.md" style="font-weight: bold; margin-right: 15px; color: #007bff;">简体中文</a> |
-  <a href="./README.en.md" style="margin-right: 15px; color: #999;">English</a>
-</div>
+**简体中文** | [English](./README.en.md)
 
 ## 📦 项目简介
 
