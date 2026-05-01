@@ -1,10 +1,14 @@
 # update-notify-js
 
-**简体中文** | [English](./README.en.md)
+<div align="center">
 
-## 📦 项目简介
+[**简体中文**](./README.md) | [English](./README.en.md)
 
-一个轻量级的纯前端实现的版本更新自动检测和提示刷新插件。它能够自动监测应用的新版本发布，并通过友好的方式通知用户进行更新，确保用户始终使用最新版本的应用。
+> 纯 JS 零依赖的轻量级版本更新检测插件。自动检测 SPA 应用的新版本发布，并通过友好的方式通知用户刷新页面，确保用户始终使用最新版本。
+
+[报告问题](https://github.com/wangkai000/update-notify-js/issues) · [功能请求](https://github.com/wangkai000/update-notify-js/issues)
+
+</div>
 
 ## ✨ 核心特性
 
@@ -20,13 +24,13 @@
 
 ```bash
 # 使用 npm
-npm install update-notify-js
+npm install update-notify-js -S
 
 # 使用 yarn
-yarn add update-notify-js
+yarn add update-notify-js -S
 
 # 使用 pnpm
-pnpm add update-notify-js
+pnpm add update-notify-js -S
 ```
 
 ## 🚀 快速开始

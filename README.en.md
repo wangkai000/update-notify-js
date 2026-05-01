@@ -1,10 +1,14 @@
 # update-notify-js
 
-[简体中文](./README.md) | **English**
+<div align="center">
 
-## 📦 Project Introduction
+[简体中文](./README.md) | [**English**](./README.en.md)
 
-A lightweight front-end version update detection and notification plugin. It can automatically monitor for new version releases of your application and notify users in a friendly way to update, ensuring users always use the latest version of your application.
+> A lightweight, zero-dependency pure JS library that detects web app version updates and prompts automatic refresh. It automatically monitors SPA applications for new releases and notifies users in a friendly way to refresh, ensuring users always use the latest version.
+
+[Report Bug](https://github.com/wangkai000/update-notify-js/issues) · [Request Feature](https://github.com/wangkai000/update-notify-js/issues)
+
+</div>
 
 ## ✨ Core Features
 
@@ -20,13 +24,13 @@ A lightweight front-end version update detection and notification plugin. It can
 
 ```bash
 # Using npm
-npm install update-notify-js
+npm install update-notify-js -S
 
 # Using yarn
-yarn add update-notify-js
+yarn add update-notify-js -S
 
 # Using pnpm
-pnpm add update-notify-js
+pnpm add update-notify-js -S
 ```
 
 ## 🚀 Quick Start

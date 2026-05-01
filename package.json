@@ -1,7 +1,7 @@
 {
   "name": "update-notify-js",
   "version": "1.0.7",
-  "description": "一个纯前端实现的版本更新自动提示刷新插件。A lightweight library for detecting version updates in web applications",
+  "description": "纯 JS 零依赖的轻量级版本更新检测插件。A lightweight, zero-dependency pure JS library that detects web app version updates and prompts automatic refresh.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "unpkg": "dist/index.umd.js",
